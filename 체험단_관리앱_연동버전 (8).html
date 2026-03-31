@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>체험단 관리 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --primary: #2D4A8A;
+    --primary-light: #EEF2FB;
+    --accent: #E85D4A;
+    --accent-soft: #FEF0EE;
+    --gold: #C9A84C;
+    --gold-soft: #FBF6EA;
+    --green: #3A8A5E;
+    --green-soft: #EDF5F0;
+    --text: #1A1A2E;
+    --text-mid: #555577;
+    --text-soft: #9090A8;
+    --border: #E4E4EF;
+    --shadow: 0 2px 16px rgba(45,74,138,0.08);
+    --radius: 14px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  .header {
+    background:var(--primary); padding:0 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px; position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 20px rgba(45,74,138,0.25);
+  }
+  .header-logo { font-size:18px; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; }
+  .header-logo span { background:var(--accent); color:#fff; padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; }
+  .conn-status { display:flex; align-items:center; gap:7px; font-size:12.5px; color:rgba(255,255,255,0.8); }
+  .dot { width:8px; height:8px; border-radius:50%; background:#ccc; }
+  .dot.ok { background:#4CAF50; animation:pulse 2s infinite; }
+  .dot.fail { background:#E85D4A; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .tab-nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; padding:0 32px; overflow-x:auto; scrollbar-width:none; }
+  .tab-nav::-webkit-scrollbar { display:none; }
+  .tab-btn { padding:16px 20px; font-size:13.5px; font-weight:500; color:var(--text-soft); cursor:pointer; border:none; background:none; border-bottom:3px solid transparent; white-space:nowrap; transition:all .2s; display:flex; align-items:center; gap:8px; font-family:'Noto Sans KR',sans-serif; }
+  .tab-btn:hover { color:var(--primary); }
+  .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:700; }
+  .tab-num { width:20px; height:20px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .tab-btn.active .tab-num { background:var(--primary); color:#fff; }
+
+  .content { padding:28px 32px; max-width:1100px; margin:0 auto; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; animation:fadeIn .25s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  .page-title { font-size:22px; font-weight:700; letter-spacing:-0.5px; margin-bottom:6px; }
+  .page-desc { font-size:13.5px; color:var(--text-mid); line-height:1.6; margin-bottom:24px; }
+
+  .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:24px; box-shadow:var(--shadow); margin-bottom:20px; }
+  .card-title { font-size:15px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .card-title-icon { width:28px; height:28px; border-radius:8px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:14px; }
+
+  .form-row { display:flex; gap:12px; margin-bottom:12px; }
+  .form-group { display:flex; flex-direction:column; gap:6px; flex:1; }
+  .form-label { font-size:12.5px; font-weight:600; color:var(--text-mid); }
+  .form-input { border:1.5px solid var(--border); border-radius:9px; padding:10px 14px; font-size:13.5px; font-family:'Noto Sans KR',sans-serif; color:var(--text); transition:border-color .2s; background:#FAFAFA; }
+  .form-input:focus { outline:none; border-color:var(--primary); background:#fff; }
+  .form-input::placeholder { color:var(--text-soft); }
+  textarea.form-input { resize:vertical; min-height:80px; line-height:1.6; }
+  select.form-input { cursor:pointer; }
+
+  .btn { padding:10px 20px; border-radius:9px; font-size:13.5px; font-weight:600; cursor:pointer; border:none; font-family:'Noto Sans KR',sans-serif; transition:all .15s; display:inline-flex; align-items:center; gap:7px; }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-primary:hover { background:#1e3a7a; transform:translateY(-1px); }
+  .btn-secondary { background:var(--primary-light); color:var(--primary); }
+  .btn-danger { background:var(--accent-soft); color:var(--accent); }
+  .btn-success { background:var(--green-soft); color:var(--green); }
+  .btn-gold { background:var(--gold-soft); color:#8A6A00; }
+  .btn-sm { padding:7px 13px; font-size:12px; }
+  .btn-lg { padding:13px 26px; font-size:15px; }
+  .btn-block { width:100%; justify-content:center; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none!important; }
+
+  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .data-table th { background:var(--bg); padding:10px 14px; text-align:left; font-size:12px; font-weight:700; color:var(--text-mid); border-bottom:2px solid var(--border); white-space:nowrap; }
+  .data-table td { padding:12px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table tr:hover td { background:var(--bg); }
+
+  .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:600; }
+  .badge-blue { background:var(--primary-light); color:var(--primary); }
+  .badge-red { background:var(--accent-soft); color:var(--accent); }
+  .badge-green { background:var(--green-soft); color:var(--green); }
+  .badge-gold { background:var(--gold-soft); color:#8A6A00; }
+  .badge-gray { background:#F0F0F5; color:var(--text-soft); }
+
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+  .stat-box { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:20px; text-align:center; }
+  .stat-num { font-size:32px; font-weight:900; color:var(--primary); letter-spacing:-1px; }
+  .stat-label { font-size:12.5px; color:var(--text-mid); margin-top:4px; font-weight:500; }
+
+  .notice-box { background:#FFF8E1; border:1.5px dashed #FFC107; border-radius:var(--radius); padding:16px 20px; display:flex; gap:10px; margin-bottom:16px; }
+  .setup-banner { background:linear-gradient(135deg,#FFF8E7 0%,#FFF3D4 100%); border:1px solid #F0D080; border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; display:flex; gap:12px; }
+  .banner-text strong { font-size:13px; color:#7A5C00; }
+  .banner-text p { font-size:12.5px; color:#9A7A20; margin-top:3px; line-height:1.5; }
+
+  .form-section { background:var(--bg); border-radius:10px; padding:16px; margin-bottom:16px; }
+  .form-section-title { font-size:12.5px; font-weight:700; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; }
+
+  .tag-list { display:flex; flex-wrap:wrap; gap:6px; }
+  .tag-item { background:var(--primary-light); color:var(--primary); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .tag-item:hover { background:var(--primary); color:#fff; }
+  .tag-item.omg { background:var(--accent-soft); color:var(--accent); }
+  .tag-item.omg:hover { background:var(--accent); color:#fff; }
+
+  .late-row td { color:var(--accent); background:#FFF5F5; }
+  .late-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:5px; font-size:11px; font-weight:700; margin-left:6px; }
+  .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
+
+  .msg-box { background:#F8FAF5; border:1px solid #D0E8C0; border-radius:var(--radius); padding:18px; font-size:13.5px; line-height:1.8; }
+  .var-tag { background:var(--primary); color:#fff; padding:1px 7px; border-radius:4px; font-size:11.5px; font-weight:700; display:inline-block; margin:0 1px; }
+
+  /* 로딩 */
+  .loading { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:300; align-items:center; justify-content:center; }
+  .loading.show { display:flex; }
+  .loading-box { background:#fff; border-radius:16px; padding:32px 40px; text-align:center; }
+  .spinner { width:40px; height:40px; border:4px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .loading-text { font-size:14px; color:var(--text-mid); font-weight:500; }
+
+  /* 알림 */
+  .alert-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+  .alert-modal.show { display:flex; }
+  .alert-box { background:#fff; border-radius:16px; padding:28px; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; }
+  .alert-icon { font-size:40px; margin-bottom:12px; }
+  .alert-title { font-size:17px; font-weight:700; margin-bottom:8px; }
+  .alert-msg { font-size:13.5px; color:var(--text-mid); margin-bottom:20px; line-height:1.6; white-space:pre-line; }
+
+  /* 결과 링크 박스 */
+  .result-link-box { background:var(--primary-light); border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .result-link-box a { color:var(--primary); font-size:13px; font-weight:600; word-break:break-all; }
+
+  @media(max-width:700px) {
+    .content { padding:16px; }
+    .two-col,.three-col { grid-template-columns:1fr; }
+    .form-row { flex-direction:column; }
+  }
+
+  .link-text { color:var(--primary); font-size:12px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
+  .img-placeholder { width:44px; height:44px; border-radius:8px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:18px; border:1px dashed var(--primary); }
+  .check-ok { color:var(--green); }
+  .check-no { color:var(--text-soft); }
+  .omg-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:5px; font-size:11px; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">✨ 체험단 관리 시스템 <span>BETA</span></div>
+  <div class="conn-status">
+    <div class="dot" id="connDot"></div>
+    <span id="connText">연결 확인중...</span>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab(0)"><div class="tab-num">1</div>📋 설문지 생성</button>
+  <button class="tab-btn" onclick="switchTab(1)"><div class="tab-num">2</div>🎯 체험단 선정</button>
+  <button class="tab-btn" onclick="switchTab(2)"><div class="tab-num">3</div>📨 문자 발송</button>
+  <button class="tab-btn" onclick="switchTab(3)"><div class="tab-num">4</div>✅ 후기 확인</button>
+  <button class="tab-btn" onclick="switchTab(4)"><div class="tab-num">5</div>💰 페이백 등록</button>
+</div>
+
+<div class="content">
+
+  <!-- ===== TAB 1: 설문지 생성 ===== -->
+  <div class="tab-content active" id="tab0">
+    <div class="page-title">📋 제품 설문지 자동 만들기</div>
+    <div class="page-desc">제품명과 쿠팡 링크를 추가하고 버튼 하나로 구글 폼을 자동 생성합니다</div>
+
+    <!-- 스프레드시트 설정 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">🔗</div>구글 스프레드시트 연결</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2">
+          <div class="form-label">스프레드시트 ID</div>
+          <input class="form-input" id="sheetIdInput" placeholder="구글 시트 주소에서 /d/XXXXX/edit → XXXXX 부분만 복사">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-secondary" onclick="saveSheetId()">💾 저장</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-soft);margin-top:6px">
+        ⚠️ Apps Script 코드 안에 SHEET_ID도 동일하게 넣어주세요
+      </div>
+    </div>
+
+    <!-- 제품 등록 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">📦</div>제품 등록</div>
+
+      <!-- 이미지 복사 방법 안내 -->
+      <div style="background:#EEF6FF;border:1px solid #BDD9FF;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1A4A8A;line-height:1.8">
+        📌 <strong>이미지 주소 복사 방법</strong><br>
+        쿠팡 제품 페이지 → 메인 이미지 위에서 <strong>우클릭</strong> → <strong>"이미지 주소 복사"</strong> → 아래 이미지 주소 칸에 붙여넣기
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">새 제품 추가</div>
+        <div class="form-row">
+          <div class="form-group" style="flex:1">
+            <div class="form-label">제품명</div>
+            <input class="form-input" type="text" id="newName" placeholder="예) 하이무브">
+          </div>
+          <div class="form-group" style="flex:2">
+            <div class="form-label">쿠팡 링크</div>
+            <input class="form-input" type="url" id="newLink" placeholder="https://www.coupang.com/vp/products/...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:3">
+            <div class="form-label">🖼️ 이미지 주소 (우클릭 → 이미지 주소 복사)</div>
+            <input class="form-input" type="url" id="newImageUrl" placeholder="https://thumbnail7.coupangcdn.com/...jpg">
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button class="btn btn-primary" onclick="addProduct()">+ 추가</button>
+          </div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>이미지</th><th>제품명</th><th>쿠팡 링크</th><th></th></tr></thead>
+        <tbody id="productBody">
+          <tr><td colspan="4" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">제품을 추가해주세요</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 설문지 옵션 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">📝</div>설문지 생성 옵션</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <div class="form-label">설문지 제목</div>
+        <input class="form-input" id="formTitle" value="체험단 신청 설문지">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <div class="form-label">안내 문구 (설문지 상단)</div>
+        <textarea class="form-input" id="formDesc">안녕하세요! 체험단 신청 설문지입니다.
+아래 제품을 확인 후 신청해 주세요.
+선정 결과는 개별 문자로 안내드립니다.</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">신청 마감일</div>
+          <input class="form-input" type="date" id="formDeadline">
+        </div>
+        <div class="form-group">
+          <div class="form-label">후기 제출 마감일</div>
+          <input class="form-input" type="date" id="reviewDeadline">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="createGoogleForm()">🚀 구글 폼 자동 생성하기</button>
+      </div>
+      <div id="formResultBox" style="display:none" class="result-link-box">
+        <span>📋</span>
+        <div>
+          <div style="font-size:12px;color:var(--text-mid);margin-bottom:4px">생성된 구글 폼 링크</div>
+          <a id="formResultLink" href="#" target="_blank">링크 생성 후 여기에 표시됩니다</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 체험단 선정 ===== -->
+  <div class="tab-content" id="tab1">
+    <div class="page-title">🎯 체험단 선정</div>
+    <div class="page-desc">구글 폼 신청자 중 조건에 맞는 분들을 자동으로 선정합니다</div>
+
+    <div class="three-col" style="margin-bottom:20px">
+      <div class="stat-box"><div class="stat-num" id="totalCount">-</div><div class="stat-label">총 신청자</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--accent)" id="excludeCount">-</div><div class="stat-label">제외 대상</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="eligibleCount">-</div><div class="stat-label">선정 가능</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon">⚙️</div>선정 조건</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <div class="form-label">선정 인원</div>
+          <input class="form-input" type="number" id="selectCount" value="20" placeholder="명">
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <div class="form-label">제외 기간</div>
+          <select class="form-input" id="excludeMonths">
+            <option value="2">최근 2개월 이내 선정자 제외</option>
+            <option value="1">최근 1개월 이내 선정자 제외</option>
+            <option value="3">최근 3개월 이내 선정자 제외</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:16px">
+          <div class="form-label">선정 방식</div>
+          <select class="form-input" id="selectMethod">
+            <option value="random">무작위 추첨</option>
+            <option value="first">먼저 신청한 순서</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:16px">
+          <div class="form-label">후기 마감일</div>
+          <input class="form-input" type="date" id="selectionReviewDeadline">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="loadApplicants()">📥 신청자 불러오기</button>
+          <button class="btn btn-primary" onclick="selectMembers()">🎲 자동 선정</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon">🚫</div>OMG 리스트</div>
+        <div style="font-size:12.5px;color:var(--text-mid);margin-bottom:12px;line-height:1.6">
+          마감일 미준수자를 등록하면 선정에서 자동 제외됩니다
+        </div>
+        <div class="tag-list" id="omgTagList" style="margin-bottom:12px">
+          <div style="font-size:12.5px;color:var(--text-soft)">등록된 OMG 없음</div>
+        </div>
+        <hr class="divider">
+        <div class="form-row" style="align-items:flex-end">
+          <div class="form-group">
+            <div class="form-label">이름</div>
+            <input class="form-input" type="text" id="omgName" placeholder="이름">
+          </div>
+          <div class="form-group">
+            <div class="form-label">전화번호</div>
+            <input class="form-input" type="text" id="omgPhone" placeholder="010-0000-0000">
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="addOMG()" style="align-self:flex-end">+ 추가</button>
+        </div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="loadOMGList()">🔄 목록 새로고침</button>
+      </div>
+    </div>
+
+    <!-- 선정 결과 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">🏆</div>선정 결과
+        <span class="badge badge-blue" id="selectedBadge" style="margin-left:auto">선정 대기</span>
+      </div>
+      <div class="data-table" style="overflow-x:auto">
+        <table class="data-table" id="selectedTable">
+          <thead><tr><th>#</th><th>성함</th><th>전화번호</th><th>제품</th><th>상태</th></tr></thead>
+          <tbody id="selectedBody">
+            <tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">자동 선정 버튼을 눌러주세요</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveSelectedAndGoNext()">💾 저장 후 문자 발송으로 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: 문자 발송 ===== -->
+  <div class="tab-content" id="tab2">
+    <div class="page-title">📨 솔라피 문자 / 알림톡 발송</div>
+    <div class="page-desc">선정된 체험단에게 선정 안내 문자를 발송합니다</div>
+
+    <div class="notice-box">
+      <span style="font-size:20px">⏳</span>
+      <div>
+        <strong style="font-size:13px;color:#6D4C00">알림톡 검수 중</strong>
+        <p style="font-size:12.5px;color:#9A7A20;margin-top:3px">검수 완료 전까지는 일반 SMS/LMS로 발송됩니다. 검수 완료 후 알림톡으로 자동 전환됩니다.</p>
+      </div>
+    </div>
+
+    <!-- 솔라피 설정 -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">🔑</div>솔라피 설정 (Apps Script에 입력)</div>
+      <div class="setup-banner" style="margin-bottom:0">
+        <span style="font-size:20px">📌</span>
+        <div class="banner-text">
+          <strong>솔라피 키는 Apps Script에 직접 입력해야 합니다</strong>
+          <p>보안을 위해 API 키는 Apps Script 코드 파일에만 저장하세요.<br>
+          솔라피 대시보드 → API 키 → Key / Secret 복사 후 Code.gs에 붙여넣기</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon">✏️</div>메시지 내용</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <div class="form-label">발송 유형</div>
+          <select class="form-input" id="msgType">
+            <option value="sms">일반 SMS (현재)</option>
+            <option value="lms">LMS (장문)</option>
+            <option value="ata">카카오 알림톡 (검수 후)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">메시지 내용</div>
+          <textarea class="form-input" id="msgTemplate" style="min-height:140px">안녕하세요 {성함}님! 🎉
+
+{제품명} 체험단으로 선정되셨습니다.
+
+📦 제품 발송 예정일: {발송예정일}
+📝 후기 마감일: {마감일}
+
+후기 방법은 별도로 안내드립니다.
+감사합니다 ☺️</textarea>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <span class="badge badge-blue">{성함}</span>
+          <span class="badge badge-blue">{제품명}</span>
+          <span class="badge badge-blue">{마감일}</span>
+          <span class="badge badge-blue">{발송예정일}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon">⚙️</div>발송 설정</div>
+        <div class="form-group" style="margin-bottom:12px">
+          <div class="form-label">발송 예정일</div>
+          <input class="form-input" type="date" id="shipDate">
+        </div>
+        <div class="form-group" style="margin-bottom:16px">
+          <div class="form-label">후기 마감일</div>
+          <input class="form-input" type="date" id="msgReviewDeadline">
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <div class="form-label">대상자 수</div>
+          <input class="form-input" readonly id="sendTargetCount" value="선정 탭에서 불러와집니다">
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" onclick="sendMessages()" style="margin-top:8px">
+          📨 지금 발송하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: 후기 확인 ===== -->
+  <div class="tab-content" id="tab3">
+    <div class="page-title">✅ 후기 확인 체크</div>
+    <div class="page-desc">자사몰 · 몰 후기 · SNS 후기를 확인하고, 마감 미준수자를 빨간색으로 표시합니다</div>
+
+    <div class="three-col" style="margin-bottom:20px">
+      <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="reviewDoneCount">-</div><div class="stat-label">후기 완료</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--gold)" id="reviewIngCount">-</div><div class="stat-label">진행중</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--accent)" id="reviewLateCount">-</div><div class="stat-label">마감 미준수</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">📋</div>후기 현황표
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="loadReviews()">🔄 스프레드시트에서 불러오기</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>성함</th><th>제품</th><th>마감일</th>
+              <th>자사몰 후기</th><th>몰 후기</th><th>SNS 후기</th><th>상태</th><th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="reviewBody">
+            <tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">불러오기 버튼을 눌러주세요</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-danger btn-sm" onclick="addLateToOMG()">🚫 마감 미준수자 → OMG 자동 등록</button>
+        <button class="btn btn-gold btn-sm" onclick="switchTab(4)">💰 페이백 등록으로 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: 페이백 ===== -->
+  <div class="tab-content" id="tab4">
+    <div class="page-title">💰 페이백 등록</div>
+    <div class="page-desc">후기 완료자의 페이백 내역을 스프레드시트에 자동 저장합니다<br>
+    <span style="color:var(--text-soft);font-size:12.5px">하이웍스 API 연동 여부 확인 후 직접 업로드하거나 엑셀로 내보낼 수 있습니다</span></div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">📝</div>페이백 기본 설정</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="form-group">
+          <div class="form-label">회차명</div>
+          <input class="form-input" id="payRound" placeholder="예) 3월 4차 체험단">
+        </div>
+        <div class="form-group">
+          <div class="form-label">1인당 페이백 금액 (원)</div>
+          <input class="form-input" type="number" id="payAmount" placeholder="10000">
+        </div>
+        <div class="form-group">
+          <div class="form-label">지급 예정일</div>
+          <input class="form-input" type="date" id="payDate">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-icon">✅</div>후기 완료자 목록
+        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="loadPaybackList()">📥 후기 완료자 불러오기</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th>성함</th><th>전화번호</th><th>제품</th><th>후기 상태</th><th>금액</th></tr></thead>
+          <tbody id="paybackBody">
+            <tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">불러오기 버튼을 눌러주세요</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="payTotal" style="background:var(--primary-light);border-radius:10px;padding:14px 16px;margin-top:14px;display:none;justify-content:space-between;align-items:center">
+        <span style="font-size:13.5px;color:var(--primary);font-weight:600">총 지급 예정액</span>
+        <span id="payTotalAmt" style="font-size:22px;font-weight:900;color:var(--primary)">0원</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="savePayback()">💾 시트에 저장하기</button>
+        <div style="background:#FFF8E1;border:1px solid #FFC107;border-radius:9px;padding:10px 14px;font-size:12.5px;color:#7A5C00">
+          💡 하이웍스 API 지원 여부에 따라 직접 업로드 기능 추가 예정
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- LOADING -->
+<div class="loading" id="loadingModal">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">처리 중입니다...</div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div class="alert-modal" id="alertModal">
+  <div class="alert-box">
+    <div class="alert-icon" id="alertIcon">✅</div>
+    <div class="alert-title" id="alertTitle"></div>
+    <div class="alert-msg" id="alertMsg"></div>
+    <button class="btn btn-primary btn-block" onclick="closeAlert()">확인</button>
+  </div>
+</div>
+
+<script>
+// ========================================
+// ▼ 앱스크립트 URL (수정하지 마세요)
+// ========================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZacrafSovSREX8WGFXcIZT327I3PhSCtH1DsHfxVk65cSY_aX6puhzy7IdFFklT-h/exec";
+
+// 앱 내부 상태
+let products = [];        // 제품 목록
+let applicants = [];      // 신청자 목록
+let selectedList = [];    // 선정된 인원
+let omgList = [];         // OMG 리스트
+let reviews = [];         // 후기 현황
+let sheetId = localStorage.getItem("sheetId") || "";
+
+// ========================================
+// 초기화
+// ========================================
+document.addEventListener("DOMContentLoaded", () => {
+  setTodayDates();
+  if (sheetId) document.getElementById("sheetIdInput").value = sheetId;
+  checkConnection();
+  loadOMGList();
+});
+
+function setTodayDates() {
+  const pad = n => String(n).padStart(2,"0");
+  const today = new Date();
+  const str = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  document.querySelectorAll("input[type=date]").forEach(el => { if (!el.value) el.value = str; });
+}
+
+// ========================================
+// 서버 연결 확인
+// ========================================
+async function checkConnection() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const json = await res.json();
+    if (json.success) {
+      document.getElementById("connDot").className = "dot ok";
+      document.getElementById("connText").textContent = "서버 연결됨";
+    } else { setConnFail(); }
+  } catch { setConnFail(); }
+}
+function setConnFail() {
+  document.getElementById("connDot").className = "dot fail";
+  document.getElementById("connText").textContent = "연결 실패 - Apps Script 재배포 필요";
+}
+
+// ========================================
+// Apps Script 호출 공통 함수
+// ========================================
+async function callScript(action, data = {}) {
+  showLoading();
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action, ...data })
+    });
+    const json = await res.json();
+    return json;
+  } catch (err) {
+    return { success: false, message: "서버 연결 실패: " + err.message };
+  } finally {
+    hideLoading();
+  }
+}
+
+// ========================================
+// TAB 1: 설문지 생성
+// ========================================
+function saveSheetId() {
+  sheetId = document.getElementById("sheetIdInput").value.trim();
+  localStorage.setItem("sheetId", sheetId);
+  showAlert("💾","저장됨","스프레드시트 ID가 저장되었습니다.\nApps Script 코드 안의 SHEET_ID도 동일하게 넣어주세요!");
+}
+
+function addProduct() {
+  const name = document.getElementById("newName").value.trim();
+  const link = document.getElementById("newLink").value.trim();
+  const imageUrl = document.getElementById("newImageUrl").value.trim();
+  if (!name || !link) { showAlert("⚠️","입력 필요","제품명과 쿠팡 링크를 입력해주세요."); return; }
+  if (!imageUrl) { showAlert("⚠️","이미지 주소 필요","쿠팡 이미지 우클릭 → 이미지 주소 복사 후 붙여넣어 주세요!"); return; }
+  products.push({ id: Date.now(), name, link, imageUrl });
+  renderProducts();
+  document.getElementById("newName").value = "";
+  document.getElementById("newLink").value = "";
+  document.getElementById("newImageUrl").value = "";
+}
+
+function renderProducts() {
+  const tbody = document.getElementById("productBody");
+  if (products.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">제품을 추가해주세요</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = products.map((p, i) => `
+    <tr>
+      <td>
+        ${p.imageUrl
+          ? `<img src="${p.imageUrl}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1px solid var(--border)" onerror="this.style.display='none'" />`
+          : `<div class="img-placeholder">📦</div>`
+        }
+      </td>
+      <td><strong>${p.name}</strong></td>
+      <td><span class="link-text">${p.link}</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="removeProduct(${i})">삭제</button></td>
+    </tr>`).join("");
+}
+
+function removeProduct(i) {
+  products.splice(i, 1);
+  renderProducts();
+}
+
+async function createGoogleForm() {
+  if (products.length === 0) { showAlert("⚠️","제품 없음","먼저 제품을 추가해주세요."); return; }
+  setLoadingText("구글 폼 생성 중...");
+  const result = await callScript("createForm", {
+    products,
+    deadline: document.getElementById("formDeadline").value,
+    reviewDeadline: document.getElementById("reviewDeadline").value
+  });
+  if (result.success) {
+    document.getElementById("formResultBox").style.display = "flex";
+    const link = document.getElementById("formResultLink");
+    link.href = result.formUrl;
+    link.textContent = result.formUrl;
+    showAlert("🎉","구글 폼 생성 완료!","폼이 생성되었습니다!\n링크를 복사해서 신청자들에게 공유하세요.");
+  } else {
+    showAlert("❌","생성 실패",result.message);
+  }
+}
+
+// ========================================
+// TAB 2: 체험단 선정
+// ========================================
+async function loadApplicants() {
+  setLoadingText("신청자 불러오는 중...");
+  const result = await callScript("getApplicants");
+  if (!result.success) { showAlert("❌","실패",result.message); return; }
+  applicants = result.applicants || [];
+  document.getElementById("totalCount").textContent = applicants.length;
+
+  // OMG + 최근 선정자 제외 계산
+  const excluded = applicants.filter(a => isExcluded(a)).length;
+  document.getElementById("excludeCount").textContent = excluded;
+  document.getElementById("eligibleCount").textContent = applicants.length - excluded;
+  showAlert("✅","불러오기 완료",`총 ${applicants.length}명의 신청자를 불러왔습니다.`);
+}
+
+function isExcluded(applicant) {
+  // OMG 리스트 체크
+  const name = applicant["성함"] || "";
+  const phone = applicant["전화번호"] || "";
+  if (omgList.some(o => o.name === name || o.phone === phone)) return true;
+  return false;
+}
+
+function selectMembers() {
+  const count = parseInt(document.getElementById("selectCount").value) || 20;
+  const eligible = applicants.filter(a => !isExcluded(a));
+
+  // 무작위 또는 순서
+  let pool = [...eligible];
+  const method = document.getElementById("selectMethod").value;
+  if (method === "random") {
+    pool = pool.sort(() => Math.random() - 0.5);
+  }
+  selectedList = pool.slice(0, count);
+
+  document.getElementById("selectedBadge").textContent = `${selectedList.length}명 선정`;
+  document.getElementById("selectedBadge").className = "badge badge-green";
+  document.getElementById("sendTargetCount").value = `${selectedList.length}명`;
+
+  const tbody = document.getElementById("selectedBody");
+  if (selectedList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:20px">선정 가능한 신청자가 없습니다</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = selectedList.map((p, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${p["성함"] || "-"}</strong></td>
+      <td>${p["전화번호"] || "-"}</td>
+      <td>${p["신청 제품을 선택해 주세요"] || "-"}</td>
+      <td><span class="badge badge-green">✅ 선정</span></td>
+    </tr>`).join("");
+}
+
+async function saveSelectedAndGoNext() {
+  if (selectedList.length === 0) { showAlert("⚠️","선정 필요","먼저 자동 선정을 진행해주세요."); return; }
+  setLoadingText("선정 결과 저장 중...");
+  const deadline = document.getElementById("selectionReviewDeadline").value;
+  const result = await callScript("saveSelected", {
+    selected: selectedList.map(p => ({
+      name: p["성함"] || "",
+      phone: p["전화번호"] || "",
+      product: p["신청 제품을 선택해 주세요"] || ""
+    })),
+    reviewDeadline: deadline,
+    round: new Date().toLocaleDateString("ko-KR") + " 선정"
+  });
+  if (result.success) {
+    showAlert("✅","저장 완료!",result.message);
+    switchTab(2);
+  } else {
+    showAlert("❌","저장 실패",result.message);
+  }
+}
+
+// ========================================
+// TAB 2: OMG 리스트
+// ========================================
+async function loadOMGList() {
+  const result = await callScript("getOmgList");
+  if (!result.success) return;
+  omgList = result.omgList || [];
+  renderOMGList();
+}
+
+function renderOMGList() {
+  const el = document.getElementById("omgTagList");
+  if (omgList.length === 0) {
+    el.innerHTML = `<div style="font-size:12.5px;color:var(--text-soft)">등록된 OMG 없음</div>`;
+    return;
+  }
+  el.innerHTML = omgList.map(o => `
+    <div class="tag-item omg">${o.name} <small>×</small></div>`).join("");
+}
+
+async function addOMG() {
+  const name = document.getElementById("omgName").value.trim();
+  const phone = document.getElementById("omgPhone").value.trim();
+  if (!name) { showAlert("⚠️","이름 필요","이름을 입력해주세요."); return; }
+  setLoadingText("OMG 리스트에 추가 중...");
+  const result = await callScript("saveOmgList", { name, phone });
+  if (result.success) {
+    document.getElementById("omgName").value = "";
+    document.getElementById("omgPhone").value = "";
+    await loadOMGList();
+    showAlert("🚫","추가됨",result.message);
+  } else {
+    showAlert("❌","실패",result.message);
+  }
+}
+
+// ========================================
+// TAB 3: 문자 발송
+// ========================================
+async function sendMessages() {
+  if (selectedList.length === 0) { showAlert("⚠️","선정 필요","2단계에서 체험단을 먼저 선정해주세요."); return; }
+  setLoadingText("문자 발송 중...");
+  // 실제 솔라피 연동은 Apps Script에서 처리
+  const result = await callScript("sendSms", {
+    list: selectedList.map(p => ({
+      name: p["성함"] || "",
+      phone: p["전화번호"] || "",
+      product: p["신청 제품을 선택해 주세요"] || ""
+    })),
+    template: document.getElementById("msgTemplate").value,
+    shipDate: document.getElementById("shipDate").value,
+    deadline: document.getElementById("msgReviewDeadline").value,
+    msgType: document.getElementById("msgType").value
+  });
+  if (result.success) {
+    showAlert("📨","발송 완료!",result.message || `${selectedList.length}명에게 문자 발송을 완료했습니다.`);
+  } else {
+    // 솔라피 미설정 시 안내
+    showAlert("⚠️","솔라피 설정 필요","Apps Script Code.gs에 솔라피 API Key/Secret을 입력해주세요.\n설정 방법은 가이드를 참고하세요.");
+  }
+}
+
+// ========================================
+// TAB 4: 후기 확인
+// ========================================
+async function loadReviews() {
+  setLoadingText("스프레드시트에서 불러오는 중...");
+  const result = await callScript("getReviews");
+  if (!result.success) { showAlert("❌","실패",result.message); return; }
+  reviews = result.reviews || [];
+  renderReviews();
+}
+
+function renderReviews() {
+  const tbody = document.getElementById("reviewBody");
+  if (reviews.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:20px">데이터가 없습니다</td></tr>`;
+    return;
+  }
+
+  const today = new Date();
+  let done = 0, ing = 0, late = 0;
+
+  tbody.innerHTML = reviews.map((r, i) => {
+    const deadline = r["후기마감일"] ? new Date(r["후기마감일"]) : null;
+    const isLate = deadline && today > deadline && r["후기상태"] !== "완료";
+    const status = r["후기상태"] || "미제출";
+    if (status === "완료") done++;
+    else if (isLate) late++;
+    else ing++;
+
+    const rowClass = isLate ? "late-row" : "";
+    const lateBadge = isLate ? `<span class="late-badge">마감일미준수</span>` : "";
+
+    return `<tr class="${rowClass}">
+      <td><strong>${r["성함"] || "-"}</strong>${lateBadge}</td>
+      <td>${r["제품명"] || "-"}</td>
+      <td>${r["후기마감일"] || "-"}${isLate ? " ⚠️" : ""}</td>
+      <td class="${r["자사몰후기"]==="✅"?"check-ok":"check-no"}">${r["자사몰후기"] || "○"}</td>
+      <td class="${r["몰후기"]==="✅"?"check-ok":"check-no"}">${r["몰후기"] || "○"}</td>
+      <td class="${r["SNS후기"]==="✅"?"check-ok":"check-no"}">${r["SNS후기"] || "○"}</td>
+      <td>
+        <select onchange="updateReviewStatus(${r.rowIndex}, this.value, ${isLate})" style="border:none;background:none;font-size:12px;color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif">
+          <option ${status==="미제출"?"selected":""}>미제출</option>
+          <option ${status==="완료"?"selected":""}>완료</option>
+          <option ${status==="진행중"?"selected":""}>진행중</option>
+        </select>
+      </td>
+      <td>
+        <button class="btn btn-success btn-sm" onclick="markCheck(${r.rowIndex}, i, '자사몰후기')">자사</button>
+        <button class="btn btn-secondary btn-sm" onclick="markCheck(${r.rowIndex}, i, '몰후기')">몰</button>
+        <button class="btn btn-gold btn-sm" onclick="markCheck(${r.rowIndex}, i, 'SNS후기')">SNS</button>
+      </td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("reviewDoneCount").textContent = done;
+  document.getElementById("reviewIngCount").textContent = ing;
+  document.getElementById("reviewLateCount").textContent = late;
+}
+
+async function updateReviewStatus(rowIndex, value, isLate) {
+  await callScript("updateReview", { rowIndex, column: "후기상태", value, isLate });
+}
+
+async function markCheck(rowIndex, listIdx, column) {
+  await callScript("updateReview", { rowIndex, column, value: "✅" });
+  await loadReviews();
+}
+
+async function addLateToOMG() {
+  const today = new Date();
+  const lateList = reviews.filter(r => {
+    const dl = r["후기마감일"] ? new Date(r["후기마감일"]) : null;
+    return dl && today > dl && r["후기상태"] !== "완료";
+  });
+  if (lateList.length === 0) { showAlert("✅","없음","마감 미준수자가 없습니다!"); return; }
+  for (const p of lateList) {
+    await callScript("saveOmgList", { name: p["성함"] || "", phone: p["전화번호"] || "", count: 1 });
+  }
+  await loadOMGList();
+  showAlert("🚫","완료",`${lateList.length}명이 OMG 리스트에 추가되었습니다.`);
+}
+
+// ========================================
+// TAB 5: 페이백
+// ========================================
+async function loadPaybackList() {
+  setLoadingText("후기 완료자 불러오는 중...");
+  const result = await callScript("getReviews");
+  if (!result.success) { showAlert("❌","실패",result.message); return; }
+  const completed = (result.reviews || []).filter(r => r["후기상태"] === "완료");
+  renderPaybackList(completed);
+}
+
+function renderPaybackList(list) {
+  const tbody = document.getElementById("paybackBody");
+  const amount = parseInt(document.getElementById("payAmount").value) || 0;
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:20px">후기 완료자가 없습니다</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td><input type="checkbox" class="payCheck" checked onchange="updatePayTotal()"></td>
+      <td><strong>${p["성함"] || "-"}</strong></td>
+      <td>${p["전화번호"] || "-"}</td>
+      <td>${p["제품명"] || "-"}</td>
+      <td><span class="badge badge-green">✅ 완료</span></td>
+      <td><strong>${(amount).toLocaleString()}원</strong></td>
+    </tr>`).join("");
+  document.getElementById("payTotal").style.display = "flex";
+  updatePayTotal();
+}
+
+function updatePayTotal() {
+  const amount = parseInt(document.getElementById("payAmount").value) || 0;
+  const checked = document.querySelectorAll(".payCheck:checked").length;
+  document.getElementById("payTotalAmt").textContent = (checked * amount).toLocaleString() + "원";
+}
+
+function toggleAll() {
+  const all = document.getElementById("checkAll").checked;
+  document.querySelectorAll(".payCheck").forEach(c => c.checked = all);
+  updatePayTotal();
+}
+
+async function savePayback() {
+  const round = document.getElementById("payRound").value;
+  const amount = document.getElementById("payAmount").value;
+  const payDate = document.getElementById("payDate").value;
+  if (!round) { showAlert("⚠️","입력 필요","회차명을 입력해주세요."); return; }
+
+  const rows = document.querySelectorAll("#paybackBody tr");
+  const list = [];
+  rows.forEach((row, i) => {
+    const cb = row.querySelector(".payCheck");
+    if (cb && cb.checked) {
+      const tds = row.querySelectorAll("td");
+      list.push({
+        name: tds[1]?.textContent?.trim() || "",
+        phone: tds[2]?.textContent?.trim() || "",
+        product: tds[3]?.textContent?.trim() || ""
+      });
+    }
+  });
+  if (list.length === 0) { showAlert("⚠️","선택 필요","대상자를 선택해주세요."); return; }
+
+  setLoadingText("페이백 저장 중...");
+  const result = await callScript("savePayback", { round, amount, payDate, list });
+  if (result.success) {
+    showAlert("💰","저장 완료!",result.message);
+  } else {
+    showAlert("❌","실패",result.message);
+  }
+}
+
+// ========================================
+// UI 유틸
+// ========================================
+function switchTab(n) {
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", i===n));
+  document.querySelectorAll(".tab-content").forEach((c,i) => c.classList.toggle("active", i===n));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function showAlert(icon, title, msg) {
+  document.getElementById("alertIcon").textContent = icon;
+  document.getElementById("alertTitle").textContent = title;
+  document.getElementById("alertMsg").textContent = msg;
+  document.getElementById("alertModal").classList.add("show");
+}
+function closeAlert() { document.getElementById("alertModal").classList.remove("show"); }
+
+function showLoading() { document.getElementById("loadingModal").classList.add("show"); }
+function hideLoading() { document.getElementById("loadingModal").classList.remove("show"); }
+function setLoadingText(t) { document.getElementById("loadingText").textContent = t; showLoading(); }
+</script>
+</body>
+</html>
