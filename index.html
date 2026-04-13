@@ -3,993 +3,1089 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>체험단 관리 시스템</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<title>OzMom 체험단 관리 시스템</title>
 <style>
-  :root {
-    --bg: #F5F4F0;
-    --surface: #FFFFFF;
-    --primary: #2D4A8A;
-    --primary-light: #EEF2FB;
-    --accent: #E85D4A;
-    --accent-soft: #FEF0EE;
-    --gold: #C9A84C;
-    --gold-soft: #FBF6EA;
-    --green: #3A8A5E;
-    --green-soft: #EDF5F0;
-    --text: #1A1A2E;
-    --text-mid: #555577;
-    --text-soft: #9090A8;
-    --border: #E4E4EF;
-    --shadow: 0 2px 16px rgba(45,74,138,0.08);
-    --radius: 14px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f9f8f5;
+  --border: #e8e6e0;
+  --border2: #d4d0c8;
+  --text: #1a1917;
+  --text2: #6b6860;
+  --text3: #9e9b95;
+  --accent: #2d6a4f;
+  --accent-light: #e8f4ee;
+  --accent2: #b5451b;
+  --accent2-light: #fdf0eb;
+  --blue: #1a56a0;
+  --blue-light: #eaf1fb;
+  --amber: #92470a;
+  --amber-light: #fef4e8;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
 
-  .header {
-    background:var(--primary); padding:0 32px;
-    display:flex; align-items:center; justify-content:space-between;
-    height:64px; position:sticky; top:0; z-index:100;
-    box-shadow:0 2px 20px rgba(45,74,138,0.25);
-  }
-  .header-logo { font-size:18px; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; }
-  .header-logo span { background:var(--accent); color:#fff; padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; }
-  .conn-status { display:flex; align-items:center; gap:7px; font-size:12.5px; color:rgba(255,255,255,0.8); }
-  .dot { width:8px; height:8px; border-radius:50%; background:#ccc; }
-  .dot.ok { background:#4CAF50; animation:pulse 2s infinite; }
-  .dot.fail { background:#E85D4A; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+/* Layout */
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; display: flex; flex-direction: column; }
+.logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); }
+.logo-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.nav { flex: 1; padding: 16px 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; border-left: 3px solid transparent; transition: all 0.15s; }
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item.active { background: var(--accent-light); color: var(--accent); border-left-color: var(--accent); }
+.nav-icon { width: 18px; text-align: center; font-size: 15px; }
+.main { margin-left: 220px; flex: 1; }
+.page { display: none; padding: 32px; max-width: 1100px; }
+.page.active { display: block; }
+.page-header { margin-bottom: 28px; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.page-desc { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
-  .tab-nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; padding:0 32px; overflow-x:auto; scrollbar-width:none; }
-  .tab-nav::-webkit-scrollbar { display:none; }
-  .tab-btn { padding:16px 20px; font-size:13.5px; font-weight:500; color:var(--text-soft); cursor:pointer; border:none; background:none; border-bottom:3px solid transparent; white-space:nowrap; transition:all .2s; display:flex; align-items:center; gap:8px; font-family:'Noto Sans KR',sans-serif; }
-  .tab-btn:hover { color:var(--primary); }
-  .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:700; }
-  .tab-num { width:20px; height:20px; border-radius:50%; background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-  .tab-btn.active .tab-num { background:var(--primary); color:#fff; }
+/* Cards */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.card-title { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.04em; }
+.card-row { display: flex; gap: 12px; }
 
-  .content { padding:28px 32px; max-width:1100px; margin:0 auto; }
-  .tab-content { display:none; }
-  .tab-content.active { display:block; animation:fadeIn .25s ease; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+/* Form elements */
+label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
+input[type=text], input[type=date], input[type=number], input[type=tel], textarea, select {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text); background: var(--surface2); outline: none;
+  font-family: inherit; transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); background: #fff; }
+textarea { resize: vertical; min-height: 80px; }
+.form-row { margin-bottom: 14px; }
+.form-grid { display: grid; gap: 14px; }
+.form-grid-2 { grid-template-columns: 1fr 1fr; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 
-  .page-title { font-size:22px; font-weight:700; letter-spacing:-0.5px; margin-bottom:6px; }
-  .page-desc { font-size:13.5px; color:var(--text-mid); line-height:1.6; margin-bottom:24px; }
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.15s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #235540; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.btn-secondary:hover { background: var(--bg); }
+.btn-danger { background: var(--accent2-light); color: var(--accent2); border: 1px solid #f0c4b2; }
+.btn-blue { background: var(--blue); color: #fff; }
+.btn-blue:hover { background: #154580; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-full { width: 100%; justify-content: center; }
 
-  .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:24px; box-shadow:var(--shadow); margin-bottom:20px; }
-  .card-title { font-size:15px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-  .card-title-icon { width:28px; height:28px; border-radius:8px; background:var(--primary-light); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:14px; }
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.stat-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-value { font-size: 26px; font-weight: 700; color: var(--text); margin-top: 4px; }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stat-card.green .stat-value { color: var(--accent); }
+.stat-card.red .stat-value { color: var(--accent2); }
+.stat-card.blue .stat-value { color: var(--blue); }
 
-  .form-row { display:flex; gap:12px; margin-bottom:12px; }
-  .form-group { display:flex; flex-direction:column; gap:6px; flex:1; }
-  .form-label { font-size:12.5px; font-weight:600; color:var(--text-mid); }
-  .form-input { border:1.5px solid var(--border); border-radius:9px; padding:10px 14px; font-size:13.5px; font-family:'Noto Sans KR',sans-serif; color:var(--text); transition:border-color .2s; background:#FAFAFA; }
-  .form-input:focus { outline:none; border-color:var(--primary); background:#fff; }
-  .form-input::placeholder { color:var(--text-soft); }
-  textarea.form-input { resize:vertical; min-height:80px; line-height:1.6; }
-  select.form-input { cursor:pointer; }
+/* Table */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--surface2); padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface2); }
+.copy-col { cursor: pointer; user-select: all; font-family: monospace; font-size: 12px; }
 
-  .btn { padding:10px 20px; border-radius:9px; font-size:13.5px; font-weight:600; cursor:pointer; border:none; font-family:'Noto Sans KR',sans-serif; transition:all .15s; display:inline-flex; align-items:center; gap:7px; }
-  .btn-primary { background:var(--primary); color:#fff; }
-  .btn-primary:hover { background:#1e3a7a; transform:translateY(-1px); }
-  .btn-secondary { background:var(--primary-light); color:var(--primary); }
-  .btn-danger { background:var(--accent-soft); color:var(--accent); }
-  .btn-success { background:var(--green-soft); color:var(--green); }
-  .btn-gold { background:var(--gold-soft); color:#8A6A00; }
-  .btn-sm { padding:7px 13px; font-size:12px; }
-  .btn-lg { padding:13px 26px; font-size:15px; }
-  .btn-block { width:100%; justify-content:center; }
-  .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none!important; }
+/* Badge */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-green { background: var(--accent-light); color: var(--accent); }
+.badge-red { background: var(--accent2-light); color: var(--accent2); }
+.badge-blue { background: var(--blue-light); color: var(--blue); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-gray { background: var(--bg); color: var(--text2); border: 1px solid var(--border); }
 
-  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .data-table th { background:var(--bg); padding:10px 14px; text-align:left; font-size:12px; font-weight:700; color:var(--text-mid); border-bottom:2px solid var(--border); white-space:nowrap; }
-  .data-table td { padding:12px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
-  .data-table tr:last-child td { border-bottom:none; }
-  .data-table tr:hover td { background:var(--bg); }
+/* Tags */
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
 
-  .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:600; }
-  .badge-blue { background:var(--primary-light); color:var(--primary); }
-  .badge-red { background:var(--accent-soft); color:var(--accent); }
-  .badge-green { background:var(--green-soft); color:var(--green); }
-  .badge-gold { background:var(--gold-soft); color:#8A6A00; }
-  .badge-gray { background:#F0F0F5; color:var(--text-soft); }
+/* Dashboard date filter */
+.filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-bar label { margin: 0; white-space: nowrap; }
+.filter-bar input[type=date] { width: auto; }
 
-  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
-  .stat-box { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:20px; text-align:center; }
-  .stat-num { font-size:32px; font-weight:900; color:var(--primary); letter-spacing:-1px; }
-  .stat-label { font-size:12.5px; color:var(--text-mid); margin-top:4px; font-weight:500; }
+/* Progress bar */
+.progress-wrap { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-bar { height: 6px; border-radius: 99px; transition: width 0.4s; }
 
-  .notice-box { background:#FFF8E1; border:1.5px dashed #FFC107; border-radius:var(--radius); padding:16px 20px; display:flex; gap:10px; margin-bottom:16px; }
-  .setup-banner { background:linear-gradient(135deg,#FFF8E7 0%,#FFF3D4 100%); border:1px solid #F0D080; border-radius:var(--radius); padding:16px 20px; margin-bottom:20px; display:flex; gap:12px; }
-  .banner-text strong { font-size:13px; color:#7A5C00; }
-  .banner-text p { font-size:12.5px; color:#9A7A20; margin-top:3px; line-height:1.5; }
+/* Product card in form builder */
+.product-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
+.product-thumb { width: 64px; height: 64px; border-radius: 6px; object-fit: cover; background: var(--border); flex-shrink: 0; }
+.product-info { flex: 1; }
+.product-name { font-weight: 600; font-size: 13px; }
+.product-link { font-size: 11px; color: var(--text3); word-break: break-all; }
+.product-remove { cursor: pointer; color: var(--text3); font-size: 18px; line-height: 1; padding: 2px 6px; }
+.product-remove:hover { color: var(--accent2); }
 
-  .form-section { background:var(--bg); border-radius:10px; padding:16px; margin-bottom:16px; }
-  .form-section-title { font-size:12.5px; font-weight:700; color:var(--text-mid); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; }
+/* OMG list */
+.omg-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--accent2-light); border: 1px solid #f0c4b2; border-radius: var(--radius-sm); margin-bottom: 8px; font-size: 13px; }
+.omg-item .omg-name { font-weight: 600; min-width: 70px; }
+.omg-item .omg-phone { color: var(--text2); flex: 1; }
+.omg-item .omg-reason { font-size: 11px; }
+.omg-item button { margin-left: auto; }
 
-  .tag-list { display:flex; flex-wrap:wrap; gap:6px; }
-  .tag-item { background:var(--primary-light); color:var(--primary); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; }
-  .tag-item:hover { background:var(--primary); color:#fff; }
-  .tag-item.omg { background:var(--accent-soft); color:var(--accent); }
-  .tag-item.omg:hover { background:var(--accent); color:#fff; }
+/* Result table copy button */
+.copy-row-btn { cursor: pointer; padding: 3px 8px; border-radius: 4px; font-size: 11px; background: var(--surface); border: 1px solid var(--border2); color: var(--text2); }
+.copy-row-btn:hover { background: var(--accent-light); color: var(--accent); }
 
-  .late-row td { color:var(--accent); background:#FFF5F5; }
-  .late-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:5px; font-size:11px; font-weight:700; margin-left:6px; }
-  .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
+/* Toast */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: #fff; padding: 12px 20px; border-radius: var(--radius-sm); font-size: 13px; z-index: 9999; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
 
-  .msg-box { background:#F8FAF5; border:1px solid #D0E8C0; border-radius:var(--radius); padding:18px; font-size:13.5px; line-height:1.8; }
-  .var-tag { background:var(--primary); color:#fff; padding:1px 7px; border-radius:4px; font-size:11.5px; font-weight:700; display:inline-block; margin:0 1px; }
+/* Tabs */
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab { padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  /* 로딩 */
-  .loading { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:300; align-items:center; justify-content:center; }
-  .loading.show { display:flex; }
-  .loading-box { background:#fff; border-radius:16px; padding:32px 40px; text-align:center; }
-  .spinner { width:40px; height:40px; border:4px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 14px; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .loading-text { font-size:14px; color:var(--text-mid); font-weight:500; }
+/* Channel breakdown */
+.channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 16px; }
+.channel-card { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
+.channel-name { font-size: 11px; color: var(--text2); font-weight: 600; }
+.channel-count { font-size: 22px; font-weight: 700; color: var(--text); margin: 4px 0; }
 
-  /* 알림 */
-  .alert-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
-  .alert-modal.show { display:flex; }
-  .alert-box { background:#fff; border-radius:16px; padding:28px; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; }
-  .alert-icon { font-size:40px; margin-bottom:12px; }
-  .alert-title { font-size:17px; font-weight:700; margin-bottom:8px; }
-  .alert-msg { font-size:13.5px; color:var(--text-mid); margin-bottom:20px; line-height:1.6; white-space:pre-line; }
+/* Notice */
+.notice { background: var(--blue-light); border: 1px solid #c0d8f5; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 12px; color: var(--blue); margin-bottom: 16px; }
+.notice strong { font-weight: 700; }
 
-  /* 결과 링크 박스 */
-  .result-link-box { background:var(--primary-light); border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:10px; margin-top:12px; }
-  .result-link-box a { color:var(--primary); font-size:13px; font-weight:600; word-break:break-all; }
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
-  @media(max-width:700px) {
-    .content { padding:16px; }
-    .two-col,.three-col { grid-template-columns:1fr; }
-    .form-row { flex-direction:column; }
-  }
+/* Survey preview */
+.survey-preview { border: 1px solid var(--border2); border-radius: var(--radius); padding: 20px; background: #fafafa; }
+.survey-field { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; }
+.survey-field-label { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+.survey-field-input { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 13px; color: var(--text3); }
 
-  .link-text { color:var(--primary); font-size:12px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
-  .img-placeholder { width:44px; height:44px; border-radius:8px; background:var(--primary-light); display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:18px; border:1px dashed var(--primary); }
-  .check-ok { color:var(--green); }
-  .check-no { color:var(--text-soft); }
-  .omg-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:5px; font-size:11px; font-weight:700; }
+/* Review form */
+.review-status { width: 90px; }
+
+/* Copy all btn */
+.copy-all-wrap { display: flex; justify-content: flex-end; margin-bottom: 8px; gap: 6px; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-logo">✨ 체험단 관리 시스템 <span>BETA</span></div>
-  <div class="conn-status">
-    <div class="dot" id="connDot"></div>
-    <span id="connText">연결 확인중...</span>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">🍊 OzMom</div>
+    <div class="logo-sub">체험단 관리 시스템 v2</div>
   </div>
-</div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="goPage('dashboard')"><span class="nav-icon">📊</span> 대시보드</div>
+    <div class="nav-item" onclick="goPage('survey')"><span class="nav-icon">📋</span> 설문지 생성</div>
+    <div class="nav-item" onclick="goPage('select')"><span class="nav-icon">🎯</span> 체험단 선정</div>
+    <div class="nav-item" onclick="goPage('kakao')"><span class="nav-icon">💬</span> 알림톡 발송</div>
+    <div class="nav-item" onclick="goPage('review')"><span class="nav-icon">✅</span> 후기 확인</div>
+    <div class="nav-item" onclick="goPage('omg')"><span class="nav-icon">🚫</span> OMG 리스트</div>
+  </nav>
+</aside>
 
-<!-- TAB NAV -->
-<div class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab(0)"><div class="tab-num">1</div>📋 설문지 생성</button>
-  <button class="tab-btn" onclick="switchTab(1)"><div class="tab-num">2</div>🎯 체험단 선정</button>
-  <button class="tab-btn" onclick="switchTab(2)"><div class="tab-num">3</div>📨 문자 발송</button>
-  <button class="tab-btn" onclick="switchTab(3)"><div class="tab-num">4</div>✅ 후기 확인</button>
-  <button class="tab-btn" onclick="switchTab(4)"><div class="tab-num">5</div>💰 페이백 등록</button>
-</div>
+<!-- MAIN -->
+<main class="main">
 
-<div class="content">
+<!-- ===== 1. DASHBOARD ===== -->
+<div id="page-dashboard" class="page active">
+  <div class="page-header">
+    <div class="page-title">📊 대시보드</div>
+    <div class="page-desc">체험단 전체 현황을 한눈에 확인하세요</div>
+  </div>
 
-  <!-- ===== TAB 1: 설문지 생성 ===== -->
-  <div class="tab-content active" id="tab0">
-    <div class="page-title">📋 제품 설문지 자동 만들기</div>
-    <div class="page-desc">제품명과 쿠팡 링크를 추가하고 버튼 하나로 구글 폼을 자동 생성합니다</div>
-
-    <!-- 스프레드시트 설정 -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">🔗</div>구글 스프레드시트 연결</div>
-      <div class="form-row">
-        <div class="form-group" style="flex:2">
-          <div class="form-label">스프레드시트 ID</div>
-          <input class="form-input" id="sheetIdInput" placeholder="구글 시트 주소에서 /d/XXXXX/edit → XXXXX 부분만 복사">
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-secondary" onclick="saveSheetId()">💾 저장</button>
-        </div>
+  <div class="notice">
+    <strong>📌 Apps Script URL 설정 필요</strong> — Apps Script를 배포한 뒤 아래에 URL을 붙여넣으면 실제 스프레드시트 데이터와 연결됩니다.
+  </div>
+  <div class="card" style="border:1.5px solid var(--accent);background:var(--accent-light);">
+    <div class="card-title" style="color:var(--accent);">⚙️ Apps Script 연결 설정 (최초 1회)</div>
+    <div style="display:flex;gap:10px;align-items:flex-end;">
+      <div style="flex:1;" class="form-row">
+        <label>Apps Script 배포 URL</label>
+        <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/xxxxxx/exec" oninput="saveScriptUrl()">
       </div>
-      <div style="font-size:12px;color:var(--text-soft);margin-top:6px">
-        ⚠️ Apps Script 코드 안에 SHEET_ID도 동일하게 넣어주세요
-      </div>
+      <button class="btn btn-primary" style="margin-bottom:14px;" onclick="testConnection()">🔌 연결 테스트</button>
     </div>
+    <div style="font-size:12px;color:var(--accent);">✅ URL을 입력하면 자동 저장됩니다. Apps Script 코드 탭에서 Code.gs를 붙여넣고 배포해주세요.</div>
+  </div>
 
-    <!-- 제품 등록 -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">📦</div>제품 등록</div>
+  <div class="card">
+    <div class="card-title">스프레드시트 연결</div>
+    <div style="display:flex;gap:10px;align-items:flex-end;">
+      <div style="flex:1;" class="form-row">
+        <label>Google Sheets ID <span style="font-weight:400;color:var(--text3)">(URL 중간의 긴 문자열)</span></label>
+        <input type="text" id="sheet-id" placeholder="1fhdHU7Y5a_EDr8fATJ3OMyhlWqWFPGpCHSUCm7fxIRI" value="1fhdHU7Y5a_EDr8fATJ3OMyhlWqWFPGpCHSUCm7fxIRI">
+      </div>
+      <div class="form-row">
+        <label>시트 이름</label>
+        <input type="text" id="sheet-name" placeholder="★자사몰 외 채널 후기" style="width:200px">
+      </div>
+      <button class="btn btn-primary" style="margin-bottom:14px" onclick="loadSheet()">🔗 불러오기</button>
+    </div>
+  </div>
 
-      <!-- 이미지 복사 방법 안내 -->
-      <div style="background:#EEF6FF;border:1px solid #BDD9FF;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1A4A8A;line-height:1.8">
-        📌 <strong>이미지 주소 복사 방법</strong><br>
-        쿠팡 제품 페이지 → 메인 이미지 위에서 <strong>우클릭</strong> → <strong>"이미지 주소 복사"</strong> → 아래 이미지 주소 칸에 붙여넣기
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">새 제품 추가</div>
-        <div class="form-row">
-          <div class="form-group" style="flex:1">
-            <div class="form-label">제품명</div>
-            <input class="form-input" type="text" id="newName" placeholder="예) 하이무브">
-          </div>
-          <div class="form-group" style="flex:2">
-            <div class="form-label">쿠팡 링크</div>
-            <input class="form-input" type="url" id="newLink" placeholder="https://www.coupang.com/vp/products/...">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" style="flex:3">
-            <div class="form-label">🖼️ 이미지 주소 (우클릭 → 이미지 주소 복사)</div>
-            <input class="form-input" type="url" id="newImageUrl" placeholder="https://thumbnail7.coupangcdn.com/...jpg">
-          </div>
-          <div style="display:flex;align-items:flex-end;">
-            <button class="btn btn-primary" onclick="addProduct()">+ 추가</button>
-          </div>
-        </div>
-      </div>
-      <table class="data-table">
-        <thead><tr><th>이미지</th><th>제품명</th><th>쿠팡 링크</th><th></th></tr></thead>
-        <tbody id="productBody">
-          <tr><td colspan="4" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">제품을 추가해주세요</td></tr>
+  <div class="card">
+    <div class="card-title">기간 필터</div>
+    <div class="filter-bar">
+      <label>시작일</label>
+      <input type="date" id="date-from" style="width:150px">
+      <label>종료일</label>
+      <input type="date" id="date-to" style="width:150px">
+      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(7)">최근 7일</button>
+      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(30)">최근 30일</button>
+      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(90)">최근 90일</button>
+      <button class="btn btn-primary btn-sm" onclick="applyFilter()">적용</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">전체 건수</div>
+      <div class="stat-value" id="stat-total">-</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">진행완료</div>
+      <div class="stat-value" id="stat-done">-</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">섭외중</div>
+      <div class="stat-value" id="stat-recruiting">-</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">입금대기</div>
+      <div class="stat-value" id="stat-pending">-</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">진행상황 현황</div>
+    <div id="status-bars">
+      <div style="color:var(--text3);font-size:13px;">스프레드시트를 연결하면 표시됩니다</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">채널별 현황</div>
+    <div id="channel-grid" class="channel-grid">
+      <div style="color:var(--text3);font-size:13px;grid-column:1/-1;">스프레드시트를 연결하면 표시됩니다</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">데이터 목록</div>
+    <div class="table-wrap">
+      <table id="dashboard-table">
+        <thead>
+          <tr>
+            <th>날짜</th><th>채널</th><th>제품명</th><th>진행상황</th><th>비고</th>
+          </tr>
+        </thead>
+        <tbody id="dashboard-body">
+          <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">스프레드시트를 연결하면 데이터가 표시됩니다</td></tr>
         </tbody>
       </table>
     </div>
+  </div>
+</div>
 
-    <!-- 설문지 옵션 -->
+<!-- ===== 2. SURVEY ===== -->
+<div id="page-survey" class="page">
+  <div class="page-header">
+    <div class="page-title">📋 설문지 생성</div>
+    <div class="page-desc">제품을 등록하고 체험단 신청 설문지를 자동으로 만드세요</div>
+  </div>
+
+  <div class="notice">
+    <strong>📌 사용법</strong> — 설문지 정보 입력 → 제품 추가 → "구글 폼 생성" 버튼 클릭<br>
+    구글 폼 자동 생성은 Google Apps Script 연동이 필요합니다. 아래 미리보기로 폼 내용을 확인할 수 있어요.
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+  <div>
     <div class="card">
-      <div class="card-title"><div class="card-title-icon">📝</div>설문지 생성 옵션</div>
-      <div class="form-group" style="margin-bottom:12px">
-        <div class="form-label">설문지 제목</div>
-        <input class="form-input" id="formTitle" value="체험단 신청 설문지">
+      <div class="card-title">설문지 기본 정보</div>
+      <div class="form-row">
+        <label>신청 마감일</label>
+        <input type="date" id="s-deadline" oninput="updateSurveyPreview()">
       </div>
-      <div class="form-group" style="margin-bottom:12px">
-        <div class="form-label">안내 문구 (설문지 상단)</div>
-        <textarea class="form-input" id="formDesc">안녕하세요! 체험단 신청 설문지입니다.
+      <div class="form-row">
+        <label>후기 제출 마감일</label>
+        <input type="date" id="s-review-deadline" oninput="updateSurveyPreview()">
+      </div>
+      <div class="form-row">
+        <label>설문지 제목 <span style="font-weight:400;color:var(--text3)">(자동 생성됨)</span></label>
+        <input type="text" id="s-title" placeholder="[신청마감일] 스피드 체험단 신청 설문지" oninput="updateSurveyPreview()">
+      </div>
+      <div class="form-row">
+        <label>안내 문구</label>
+        <textarea id="s-guide" rows="5" oninput="updateSurveyPreview()">안녕하세요! 체험단 신청 설문지입니다.
 아래 제품을 확인 후 신청해 주세요.
 선정 결과는 개별 문자로 안내드립니다.</textarea>
       </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">제품 추가</div>
       <div class="form-row">
-        <div class="form-group">
-          <div class="form-label">신청 마감일</div>
-          <input class="form-input" type="date" id="formDeadline">
-        </div>
-        <div class="form-group">
-          <div class="form-label">후기 제출 마감일</div>
-          <input class="form-input" type="date" id="reviewDeadline">
-        </div>
+        <label>제품명</label>
+        <input type="text" id="p-name" placeholder="예: 오즈모 세럼 50ml">
       </div>
-      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-lg" onclick="createGoogleForm()">🚀 구글 폼 자동 생성하기</button>
+      <div class="form-row">
+        <label>제품 링크 (쿠팡/자사몰 등)</label>
+        <input type="text" id="p-link" placeholder="https://...">
       </div>
-      <div id="formResultBox" style="display:none" class="result-link-box">
-        <span>📋</span>
-        <div>
-          <div style="font-size:12px;color:var(--text-mid);margin-bottom:4px">생성된 구글 폼 링크</div>
-          <a id="formResultLink" href="#" target="_blank">링크 생성 후 여기에 표시됩니다</a>
+      <div class="form-row">
+        <label>썸네일 이미지 URL</label>
+        <input type="text" id="p-img" placeholder="https://... (이미지 주소 복사)" oninput="previewThumb()">
+        <img id="thumb-preview" src="" alt="" style="width:60px;height:60px;border-radius:6px;object-fit:cover;margin-top:8px;display:none;">
+      </div>
+      <button class="btn btn-secondary btn-full" onclick="addProduct()">+ 제품 추가</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">등록된 제품 <span id="product-count" style="font-weight:400;color:var(--text3)">0개</span></div>
+      <div id="product-list">
+        <div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">제품을 추가해주세요</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" style="font-size:15px;padding:14px;" onclick="generateForm()">🚀 구글 폼 자동 생성</button>
+    <div id="form-link-result" style="display:none;margin-top:12px;" class="card">
+      <div class="card-title">생성된 설문지 링크</div>
+      <a id="form-link" href="#" target="_blank" style="color:var(--blue);font-weight:600;word-break:break-all;"></a>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="card-title">설문지 미리보기</div>
+      <div class="survey-preview">
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;" id="prev-title">설문지 제목</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;white-space:pre-line;" id="prev-guide">안내문구</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">신청마감일: <span id="prev-deadline">-</span></div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">후기제출 마감일: <span id="prev-rdeadline">-</span></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin-bottom:16px;">
+        <div id="prev-products" style="margin-bottom:16px;"></div>
+        <div class="survey-field">
+          <div class="survey-field-label">이름 <span style="color:red">*</span></div>
+          <div class="survey-field-input">답변 입력</div>
+        </div>
+        <div class="survey-field">
+          <div class="survey-field-label">전화번호 <span style="color:red">*</span></div>
+          <div class="survey-field-input">010-0000-0000</div>
+        </div>
+        <div class="survey-field">
+          <div class="survey-field-label">SNS URL <span style="color:red">*</span></div>
+          <div class="survey-field-input">https://...</div>
+        </div>
+        <div class="survey-field">
+          <div class="survey-field-label">신청 제품 선택 <span style="color:red">*</span></div>
+          <div id="prev-product-choices" style="font-size:13px;color:var(--text3)">제품을 추가하면 선택지가 표시됩니다</div>
+        </div>
+        <div class="survey-field" style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="prev-agree">
+          <label for="prev-agree" style="margin:0;font-size:13px;font-weight:400;cursor:pointer;">개인정보 수집 및 이용에 동의합니다 <span style="color:red">*</span></label>
         </div>
       </div>
     </div>
   </div>
+  </div>
+</div>
 
-  <!-- ===== TAB 2: 체험단 선정 ===== -->
-  <div class="tab-content" id="tab1">
+<!-- ===== 3. SELECT ===== -->
+<div id="page-select" class="page">
+  <div class="page-header">
     <div class="page-title">🎯 체험단 선정</div>
-    <div class="page-desc">구글 폼 신청자 중 조건에 맞는 분들을 자동으로 선정합니다</div>
+    <div class="page-desc">설문 응답자 중 조건에 맞게 자동으로 선정합니다</div>
+  </div>
 
-    <div class="three-col" style="margin-bottom:20px">
-      <div class="stat-box"><div class="stat-num" id="totalCount">-</div><div class="stat-label">총 신청자</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--accent)" id="excludeCount">-</div><div class="stat-label">제외 대상</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="eligibleCount">-</div><div class="stat-label">선정 가능</div></div>
-    </div>
+  <div class="notice">
+    <strong>📌 사용법</strong> — 설문 응답 스프레드시트 ID 입력 → 신청자 불러오기 → 조건 설정 → 자동 선정
+  </div>
 
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title"><div class="card-title-icon">⚙️</div>선정 조건</div>
-        <div class="form-group" style="margin-bottom:12px">
-          <div class="form-label">선정 인원</div>
-          <input class="form-input" type="number" id="selectCount" value="20" placeholder="명">
-        </div>
-        <div class="form-group" style="margin-bottom:12px">
-          <div class="form-label">제외 기간</div>
-          <select class="form-input" id="excludeMonths">
-            <option value="2">최근 2개월 이내 선정자 제외</option>
-            <option value="1">최근 1개월 이내 선정자 제외</option>
-            <option value="3">최근 3개월 이내 선정자 제외</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:16px">
-          <div class="form-label">선정 방식</div>
-          <select class="form-input" id="selectMethod">
-            <option value="random">무작위 추첨</option>
-            <option value="first">먼저 신청한 순서</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:16px">
-          <div class="form-label">후기 마감일</div>
-          <input class="form-input" type="date" id="selectionReviewDeadline">
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-secondary" onclick="loadApplicants()">📥 신청자 불러오기</button>
-          <button class="btn btn-primary" onclick="selectMembers()">🎲 자동 선정</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="card-title-icon">🚫</div>OMG 리스트</div>
-        <div style="font-size:12.5px;color:var(--text-mid);margin-bottom:12px;line-height:1.6">
-          마감일 미준수자를 등록하면 선정에서 자동 제외됩니다
-        </div>
-        <div class="tag-list" id="omgTagList" style="margin-bottom:12px">
-          <div style="font-size:12.5px;color:var(--text-soft)">등록된 OMG 없음</div>
-        </div>
-        <hr class="divider">
-        <div class="form-row" style="align-items:flex-end">
-          <div class="form-group">
-            <div class="form-label">이름</div>
-            <input class="form-input" type="text" id="omgName" placeholder="이름">
-          </div>
-          <div class="form-group">
-            <div class="form-label">전화번호</div>
-            <input class="form-input" type="text" id="omgPhone" placeholder="010-0000-0000">
-          </div>
-          <button class="btn btn-danger btn-sm" onclick="addOMG()" style="align-self:flex-end">+ 추가</button>
-        </div>
-        <button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="loadOMGList()">🔄 목록 새로고침</button>
-      </div>
-    </div>
-
-    <!-- 선정 결과 -->
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start;">
+  <div>
     <div class="card">
-      <div class="card-title"><div class="card-title-icon">🏆</div>선정 결과
-        <span class="badge badge-blue" id="selectedBadge" style="margin-left:auto">선정 대기</span>
+      <div class="card-title">응답 스프레드시트</div>
+      <div class="form-row">
+        <label>설문 응답 시트 ID</label>
+        <input type="text" id="resp-sheet-id" placeholder="스프레드시트 ID">
       </div>
-      <div class="data-table" style="overflow-x:auto">
-        <table class="data-table" id="selectedTable">
-          <thead><tr><th>#</th><th>성함</th><th>전화번호</th><th>제품</th><th>상태</th></tr></thead>
-          <tbody id="selectedBody">
-            <tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">자동 선정 버튼을 눌러주세요</td></tr>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="openSheet()">📄 원본 보기</button>
+        <button class="btn btn-primary btn-sm" onclick="loadApplicants()">📥 불러오기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">선정 조건</div>
+      <div class="form-row">
+        <label>제품당 선정 인원</label>
+        <input type="number" id="sel-count" value="5" min="1">
+      </div>
+      <div class="form-row">
+        <label>이전 선정 제외 기간</label>
+        <select id="sel-period">
+          <option value="1">1개월 이내 선정자 제외</option>
+          <option value="2" selected>2개월 이내 선정자 제외</option>
+          <option value="3">3개월 이내 선정자 제외</option>
+          <option value="6">6개월 이내 선정자 제외</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>선정 방식</label>
+        <select id="sel-method">
+          <option value="random">무작위 추첨</option>
+          <option value="order">먼저 신청한 순서</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doSelect()">🎲 자동 선정</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">신청 현황</div>
+      <div class="stats-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="stat-card"><div class="stat-label">전체</div><div class="stat-value" id="app-total">0</div></div>
+        <div class="stat-card red"><div class="stat-label">OMG 제외</div><div class="stat-value" id="app-omg">0</div></div>
+        <div class="stat-card blue"><div class="stat-label">기간 제외</div><div class="stat-value" id="app-period">0</div></div>
+        <div class="stat-card green"><div class="stat-label">선정 가능</div><div class="stat-value" id="app-eligible">0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="card-title">선정 결과</div>
+      <div class="copy-all-wrap">
+        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','이름')">이름 복사</button>
+        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','전화번호')">전화번호 복사</button>
+        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','SNS')">SNS 복사</button>
+        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','제품')">제품 복사</button>
+        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','제품링크')">제품링크 복사</button>
+      </div>
+      <div class="table-wrap">
+        <table id="result-table">
+          <thead><tr>
+            <th>#</th><th>이름</th><th>전화번호</th><th>SNS</th><th>제품</th><th>제품링크</th><th>상태</th>
+          </tr></thead>
+          <tbody id="result-body">
+            <tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px;">자동 선정 버튼을 눌러주세요</td></tr>
           </tbody>
         </table>
       </div>
-      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="saveSelectedAndGoNext()">💾 저장 후 문자 발송으로 →</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== TAB 3: 문자 발송 ===== -->
-  <div class="tab-content" id="tab2">
-    <div class="page-title">📨 솔라피 문자 / 알림톡 발송</div>
-    <div class="page-desc">선정된 체험단에게 선정 안내 문자를 발송합니다</div>
-
-    <div class="notice-box">
-      <span style="font-size:20px">⏳</span>
-      <div>
-        <strong style="font-size:13px;color:#6D4C00">알림톡 검수 중</strong>
-        <p style="font-size:12.5px;color:#9A7A20;margin-top:3px">검수 완료 전까지는 일반 SMS/LMS로 발송됩니다. 검수 완료 후 알림톡으로 자동 전환됩니다.</p>
-      </div>
-    </div>
-
-    <!-- 솔라피 설정 -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">🔑</div>솔라피 설정 (Apps Script에 입력)</div>
-      <div class="setup-banner" style="margin-bottom:0">
-        <span style="font-size:20px">📌</span>
-        <div class="banner-text">
-          <strong>솔라피 키는 Apps Script에 직접 입력해야 합니다</strong>
-          <p>보안을 위해 API 키는 Apps Script 코드 파일에만 저장하세요.<br>
-          솔라피 대시보드 → API 키 → Key / Secret 복사 후 Code.gs에 붙여넣기</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="two-col">
-      <div class="card">
-        <div class="card-title"><div class="card-title-icon">✏️</div>메시지 내용</div>
-        <div class="form-group" style="margin-bottom:12px">
-          <div class="form-label">발송 유형</div>
-          <select class="form-input" id="msgType">
-            <option value="sms">일반 SMS (현재)</option>
-            <option value="lms">LMS (장문)</option>
-            <option value="ata">카카오 알림톡 (검수 후)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <div class="form-label">메시지 내용</div>
-          <textarea class="form-input" id="msgTemplate" style="min-height:140px">안녕하세요 {성함}님! 🎉
-
-{제품명} 체험단으로 선정되셨습니다.
-
-📦 제품 발송 예정일: {발송예정일}
-📝 후기 마감일: {마감일}
-
-후기 방법은 별도로 안내드립니다.
-감사합니다 ☺️</textarea>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-          <span class="badge badge-blue">{성함}</span>
-          <span class="badge badge-blue">{제품명}</span>
-          <span class="badge badge-blue">{마감일}</span>
-          <span class="badge badge-blue">{발송예정일}</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="card-title-icon">⚙️</div>발송 설정</div>
-        <div class="form-group" style="margin-bottom:12px">
-          <div class="form-label">발송 예정일</div>
-          <input class="form-input" type="date" id="shipDate">
-        </div>
-        <div class="form-group" style="margin-bottom:16px">
-          <div class="form-label">후기 마감일</div>
-          <input class="form-input" type="date" id="msgReviewDeadline">
-        </div>
-        <div class="form-group" style="margin-bottom:12px">
-          <div class="form-label">대상자 수</div>
-          <input class="form-input" readonly id="sendTargetCount" value="선정 탭에서 불러와집니다">
-        </div>
-        <button class="btn btn-primary btn-block btn-lg" onclick="sendMessages()" style="margin-top:8px">
-          📨 지금 발송하기
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== TAB 4: 후기 확인 ===== -->
-  <div class="tab-content" id="tab3">
-    <div class="page-title">✅ 후기 확인 체크</div>
-    <div class="page-desc">자사몰 · 몰 후기 · SNS 후기를 확인하고, 마감 미준수자를 빨간색으로 표시합니다</div>
-
-    <div class="three-col" style="margin-bottom:20px">
-      <div class="stat-box"><div class="stat-num" style="color:var(--green)" id="reviewDoneCount">-</div><div class="stat-label">후기 완료</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--gold)" id="reviewIngCount">-</div><div class="stat-label">진행중</div></div>
-      <div class="stat-box"><div class="stat-num" style="color:var(--accent)" id="reviewLateCount">-</div><div class="stat-label">마감 미준수</div></div>
     </div>
 
     <div class="card">
-      <div class="card-title"><div class="card-title-icon">📋</div>후기 현황표
-        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="loadReviews()">🔄 스프레드시트에서 불러오기</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>성함</th><th>제품</th><th>마감일</th>
-              <th>자사몰 후기</th><th>몰 후기</th><th>SNS 후기</th><th>상태</th><th>관리</th>
-            </tr>
-          </thead>
-          <tbody id="reviewBody">
-            <tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">불러오기 버튼을 눌러주세요</td></tr>
+      <div class="card-title">전체 신청자 목록</div>
+      <div class="table-wrap">
+        <table id="applicant-table">
+          <thead><tr><th>#</th><th>이름</th><th>전화번호</th><th>SNS</th><th>신청시간</th><th>상태</th></tr></thead>
+          <tbody id="applicant-body">
+            <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">신청자를 불러오세요</td></tr>
           </tbody>
         </table>
       </div>
-      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-        <button class="btn btn-danger btn-sm" onclick="addLateToOMG()">🚫 마감 미준수자 → OMG 자동 등록</button>
-        <button class="btn btn-gold btn-sm" onclick="switchTab(4)">💰 페이백 등록으로 →</button>
-      </div>
     </div>
   </div>
-
-  <!-- ===== TAB 5: 페이백 ===== -->
-  <div class="tab-content" id="tab4">
-    <div class="page-title">💰 페이백 등록</div>
-    <div class="page-desc">후기 완료자의 페이백 내역을 스프레드시트에 자동 저장합니다<br>
-    <span style="color:var(--text-soft);font-size:12.5px">하이웍스 API 연동 여부 확인 후 직접 업로드하거나 엑셀로 내보낼 수 있습니다</span></div>
-
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">📝</div>페이백 기본 설정</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-        <div class="form-group">
-          <div class="form-label">회차명</div>
-          <input class="form-input" id="payRound" placeholder="예) 3월 4차 체험단">
-        </div>
-        <div class="form-group">
-          <div class="form-label">1인당 페이백 금액 (원)</div>
-          <input class="form-input" type="number" id="payAmount" placeholder="10000">
-        </div>
-        <div class="form-group">
-          <div class="form-label">지급 예정일</div>
-          <input class="form-input" type="date" id="payDate">
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><div class="card-title-icon">✅</div>후기 완료자 목록
-        <button class="btn btn-secondary btn-sm" style="margin-left:auto" onclick="loadPaybackList()">📥 후기 완료자 불러오기</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="data-table">
-          <thead><tr><th><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th>성함</th><th>전화번호</th><th>제품</th><th>후기 상태</th><th>금액</th></tr></thead>
-          <tbody id="paybackBody">
-            <tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">불러오기 버튼을 눌러주세요</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div id="payTotal" style="background:var(--primary-light);border-radius:10px;padding:14px 16px;margin-top:14px;display:none;justify-content:space-between;align-items:center">
-        <span style="font-size:13.5px;color:var(--primary);font-weight:600">총 지급 예정액</span>
-        <span id="payTotalAmt" style="font-size:22px;font-weight:900;color:var(--primary)">0원</span>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-lg" onclick="savePayback()">💾 시트에 저장하기</button>
-        <div style="background:#FFF8E1;border:1px solid #FFC107;border-radius:9px;padding:10px 14px;font-size:12.5px;color:#7A5C00">
-          💡 하이웍스 API 지원 여부에 따라 직접 업로드 기능 추가 예정
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /content -->
-
-<!-- LOADING -->
-<div class="loading" id="loadingModal">
-  <div class="loading-box">
-    <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">처리 중입니다...</div>
   </div>
 </div>
 
-<!-- ALERT -->
-<div class="alert-modal" id="alertModal">
-  <div class="alert-box">
-    <div class="alert-icon" id="alertIcon">✅</div>
-    <div class="alert-title" id="alertTitle"></div>
-    <div class="alert-msg" id="alertMsg"></div>
-    <button class="btn btn-primary btn-block" onclick="closeAlert()">확인</button>
+<!-- ===== 4. KAKAO ===== -->
+<div id="page-kakao" class="page">
+  <div class="page-header">
+    <div class="page-title">💬 알림톡 발송</div>
+    <div class="page-desc">솔라피 연동으로 선정 안내 문자/알림톡을 발송합니다</div>
+  </div>
+  <div class="card" style="text-align:center;padding:48px;">
+    <div style="font-size:48px;margin-bottom:16px;">⏳</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">솔라피 검수 진행중</div>
+    <div style="color:var(--text2);font-size:14px;">검수 완료 후 알림톡 발송 기능이 활성화됩니다.<br>현재는 SMS/LMS 발송만 가능합니다.</div>
+    <div style="margin-top:24px;padding:16px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #f5d5a8;display:inline-block;">
+      <div style="font-size:12px;color:var(--amber);font-weight:600;">✉️ 검수 완료 알림을 받으면 여기서 알려주세요!</div>
+    </div>
   </div>
 </div>
+
+<!-- ===== 5. REVIEW ===== -->
+<div id="page-review" class="page">
+  <div class="page-header">
+    <div class="page-title">✅ 후기 확인</div>
+    <div class="page-desc">체험단 후기 제출 현황을 확인하고 관리하세요</div>
+  </div>
+
+  <div class="notice">
+    <strong>📌 후기 수집 방법</strong> — 별도의 후기 제출 구글 폼을 만들고, 응답 시트 ID를 입력하면 자동으로 연동됩니다.
+  </div>
+
+  <div class="card">
+    <div class="card-title">후기 응답 시트 연결</div>
+    <div style="display:flex;gap:10px;align-items:flex-end;">
+      <div style="flex:1;" class="form-row">
+        <label>후기 제출 응답 시트 ID</label>
+        <input type="text" id="review-sheet-id" placeholder="스프레드시트 ID">
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn btn-secondary" onclick="openReviewSheet()">📄 원본 보기</button>
+        <button class="btn btn-primary" onclick="loadReviews()">🔄 불러오기</button>
+      </div>
+    </div>
+    <div class="notice" style="margin:0;">
+      <strong>📋 후기 폼에 들어갈 항목:</strong> 이름 · 전화번호 · 후기 작성 URL · 자사몰 후기 이미지 · 몰 후기 이미지 · 구매내역 이미지 · 페이백 금액 · 계좌번호 · 예금주 · 은행
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card green"><div class="stat-label">후기 완료</div><div class="stat-value" id="rev-done">0</div></div>
+    <div class="stat-card blue"><div class="stat-label">진행중</div><div class="stat-value" id="rev-prog">0</div></div>
+    <div class="stat-card red"><div class="stat-label">마감 미준수</div><div class="stat-value" id="rev-late">0</div></div>
+    <div class="stat-card"><div class="stat-label">전체</div><div class="stat-value" id="rev-total">0</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">후기 현황</div>
+    <div class="copy-all-wrap">
+      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','이름')">이름 복사</button>
+      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','전화번호')">전화번호 복사</button>
+      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','후기URL')">후기URL 복사</button>
+      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','계좌')">계좌 복사</button>
+      <button class="btn btn-danger btn-sm" onclick="sendLateToOMG()">🚫 미준수자 OMG 등록</button>
+    </div>
+    <div class="table-wrap">
+      <table id="review-table">
+        <thead><tr>
+          <th>이름</th><th>전화번호</th><th>제품</th><th>후기URL</th>
+          <th>자사몰후기</th><th>몰후기</th><th>구매내역</th>
+          <th>페이백금액</th><th>계좌</th><th>예금주</th><th>은행</th><th>마감일</th><th>상태</th>
+        </tr></thead>
+        <tbody id="review-body">
+          <tr><td colspan="13" style="text-align:center;color:var(--text3);padding:24px;">불러오기 버튼을 눌러주세요</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 6. OMG ===== -->
+<div id="page-omg" class="page">
+  <div class="page-header">
+    <div class="page-title">🚫 OMG 리스트</div>
+    <div class="page-desc">미준수자를 등록하면 체험단 선정에서 자동으로 제외됩니다</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;">
+  <div class="card">
+    <div class="card-title">OMG 등록</div>
+    <div class="form-row">
+      <label>이름</label>
+      <input type="text" id="omg-name" placeholder="홍길동">
+    </div>
+    <div class="form-row">
+      <label>전화번호</label>
+      <input type="tel" id="omg-phone" placeholder="010-0000-0000">
+    </div>
+    <div class="form-row">
+      <label>제외 사유</label>
+      <select id="omg-reason">
+        <option>미응답</option>
+        <option>마감일 미준수</option>
+        <option>후기 삭제</option>
+        <option>허위 후기</option>
+        <option>연락 두절</option>
+        <option>기타</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>메모 (선택)</label>
+      <input type="text" id="omg-memo" placeholder="추가 메모">
+    </div>
+    <button class="btn btn-danger btn-full" onclick="addOMG()">🚫 OMG 등록</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">OMG 리스트 <span id="omg-count" style="font-weight:400;color:var(--text3)">0명</span></div>
+    <div style="margin-bottom:10px;display:flex;gap:8px;">
+      <input type="text" id="omg-search" placeholder="이름 또는 전화번호 검색..." oninput="renderOMG()" style="width:240px;">
+    </div>
+    <div id="omg-list">
+      <div style="color:var(--text3);font-size:13px;text-align:center;padding:24px;">등록된 OMG가 없습니다</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// ========================================
-// ▼ 앱스크립트 URL (수정하지 마세요)
-// ========================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZacrafSovSREX8WGFXcIZT327I3PhSCtH1DsHfxVk65cSY_aX6puhzy7IdFFklT-h/exec";
+// ---- State ----
+let products = [];
+let omgList = JSON.parse(localStorage.getItem('omg') || '[]');
+let applicants = [];
+let selectedResult = [];
+let reviews = [];
+let SCRIPT_URL = localStorage.getItem('scriptUrl') || '';
 
-// 앱 내부 상태
-let products = [];        // 제품 목록
-let applicants = [];      // 신청자 목록
-let selectedList = [];    // 선정된 인원
-let omgList = [];         // OMG 리스트
-let reviews = [];         // 후기 현황
-let sheetId = localStorage.getItem("sheetId") || "";
-
-// ========================================
-// 초기화
-// ========================================
-document.addEventListener("DOMContentLoaded", () => {
-  setTodayDates();
-  if (sheetId) document.getElementById("sheetIdInput").value = sheetId;
-  checkConnection();
-  loadOMGList();
-});
-
-function setTodayDates() {
-  const pad = n => String(n).padStart(2,"0");
-  const today = new Date();
-  const str = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-  document.querySelectorAll("input[type=date]").forEach(el => { if (!el.value) el.value = str; });
+function saveScriptUrl() {
+  SCRIPT_URL = document.getElementById('script-url').value.trim();
+  localStorage.setItem('scriptUrl', SCRIPT_URL);
 }
 
-// ========================================
-// 서버 연결 확인
-// ========================================
-async function checkConnection() {
+async function testConnection() {
+  if (!SCRIPT_URL) { toast('Apps Script URL을 먼저 입력해주세요'); return; }
+  toast('⏳ 연결 테스트 중...');
   try {
-    const res = await fetch(SCRIPT_URL);
+    const res = await fetch(SCRIPT_URL + '?action=getDashboard');
     const json = await res.json();
-    if (json.success) {
-      document.getElementById("connDot").className = "dot ok";
-      document.getElementById("connText").textContent = "서버 연결됨";
-    } else { setConnFail(); }
-  } catch { setConnFail(); }
-}
-function setConnFail() {
-  document.getElementById("connDot").className = "dot fail";
-  document.getElementById("connText").textContent = "연결 실패 - Apps Script 재배포 필요";
-}
-
-// ========================================
-// Apps Script 호출 공통 함수
-// ========================================
-async function callScript(action, data = {}) {
-  showLoading();
-  try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({ action, ...data })
-    });
-    const json = await res.json();
-    return json;
-  } catch (err) {
-    return { success: false, message: "서버 연결 실패: " + err.message };
-  } finally {
-    hideLoading();
+    if (json.success !== false) toast('✅ 연결 성공! 스프레드시트와 연결되었습니다');
+    else toast('⚠️ 응답 받음, 하지만 오류: ' + json.error);
+  } catch (e) {
+    toast('❌ 연결 실패. URL을 확인해주세요: ' + e.message, 4000);
   }
 }
 
-// ========================================
-// TAB 1: 설문지 생성
-// ========================================
-function saveSheetId() {
-  sheetId = document.getElementById("sheetIdInput").value.trim();
-  localStorage.setItem("sheetId", sheetId);
-  showAlert("💾","저장됨","스프레드시트 ID가 저장되었습니다.\nApps Script 코드 안의 SHEET_ID도 동일하게 넣어주세요!");
+async function callScript(params) {
+  if (!SCRIPT_URL) throw new Error('Apps Script URL이 설정되지 않았습니다');
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function postScript(body) {
+  if (!SCRIPT_URL) throw new Error('Apps Script URL이 설정되지 않았습니다');
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
+
+// ---- Navigation ----
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ---- Toast ----
+function toast(msg, duration = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ---- Date utils ----
+function setDatePreset(days) {
+  const to = new Date();
+  const from = new Date();
+  from.setDate(from.getDate() - days);
+  document.getElementById('date-to').value = to.toISOString().split('T')[0];
+  document.getElementById('date-from').value = from.toISOString().split('T')[0];
+}
+function fmtDate(d) {
+  if (!d) return '-';
+  const o = new Date(d);
+  return isNaN(o) ? d : o.toLocaleDateString('ko-KR');
+}
+
+// ---- Dashboard (샘플 데이터) ----
+const sampleData = [
+  {date:'2025-11-10', ch:'인스타그램', product:'오즈모 세럼', status:'진행완료'},
+  {date:'2025-11-12', ch:'블로그', product:'오즈모 크림', status:'진행완료'},
+  {date:'2025-11-15', ch:'유튜브', product:'오즈모 앰플', status:'섭외중'},
+  {date:'2025-11-18', ch:'인스타그램', product:'오즈모 토너', status:'입금대기'},
+  {date:'2025-11-20', ch:'틱톡', product:'오즈모 선크림', status:'섭외중'},
+  {date:'2025-11-22', ch:'블로그', product:'오즈모 세럼', status:'진행완료'},
+  {date:'2025-11-25', ch:'인스타그램', product:'오즈모 크림', status:'입금대기'},
+];
+
+async function loadSheet() {
+  const sid = document.getElementById('sheet-id').value.trim();
+  const sname = document.getElementById('sheet-name').value.trim();
+  if (!SCRIPT_URL) {
+    renderDashboard(sampleData);
+    toast('ℹ️ Apps Script URL 미설정 → 샘플 데이터 표시 중');
+    return;
+  }
+  toast('⏳ 데이터 불러오는 중...');
+  try {
+    const json = await callScript({ action: 'getDashboard', sheetName: sname || '★자사몰 외 채널 후기' });
+    if (json.success) { renderDashboard(json.data); toast('✅ 스프레드시트에서 불러왔습니다'); }
+    else { toast('⚠️ ' + json.error); renderDashboard(sampleData); }
+  } catch(e) { toast('❌ ' + e.message); renderDashboard(sampleData); }
+}
+
+function applyFilter() {
+  const from = document.getElementById('date-from').value;
+  const to = document.getElementById('date-to').value;
+  let d = [...sampleData];
+  if (from) d = d.filter(r => r.date >= from);
+  if (to) d = d.filter(r => r.date <= to);
+  renderDashboard(d);
+}
+
+function renderDashboard(data) {
+  const total = data.length;
+  const done = data.filter(r => r.status === '진행완료').length;
+  const rec = data.filter(r => r.status === '섭외중').length;
+  const pend = data.filter(r => r.status === '입금대기').length;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-recruiting').textContent = rec;
+  document.getElementById('stat-pending').textContent = pend;
+
+  // Status bars
+  const sb = document.getElementById('status-bars');
+  sb.innerHTML = [
+    {label:'진행완료', count:done, color:'#2d6a4f'},
+    {label:'섭외중', count:rec, color:'#1a56a0'},
+    {label:'입금대기', count:pend, color:'#b5451b'},
+  ].map(s => `
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+        <span style="font-weight:600;">${s.label}</span>
+        <span style="color:var(--text2)">${s.count}건 (${total ? Math.round(s.count/total*100) : 0}%)</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${total ? s.count/total*100 : 0}%;background:${s.color};"></div></div>
+    </div>`).join('');
+
+  // Channel grid
+  const chMap = {};
+  data.forEach(r => { chMap[r.ch] = (chMap[r.ch] || 0) + 1; });
+  document.getElementById('channel-grid').innerHTML = Object.entries(chMap).map(([ch, cnt]) =>
+    `<div class="channel-card"><div class="channel-name">${ch}</div><div class="channel-count">${cnt}</div><div style="font-size:11px;color:var(--text3)">건</div></div>`
+  ).join('');
+
+  // Table
+  const statusBadge = {진행완료:'badge-green', 섭외중:'badge-blue', 입금대기:'badge-red'};
+  document.getElementById('dashboard-body').innerHTML = data.length
+    ? data.map(r => `<tr>
+        <td>${r.date}</td>
+        <td><span class="badge badge-gray">${r.ch}</span></td>
+        <td>${r.product}</td>
+        <td><span class="badge ${statusBadge[r.status] || 'badge-gray'}">${r.status}</span></td>
+        <td>-</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">해당 기간 데이터 없음</td></tr>';
+}
+
+// ---- Survey ----
+function updateSurveyPreview() {
+  const dl = document.getElementById('s-deadline').value;
+  const rdl = document.getElementById('s-review-deadline').value;
+  const autoTitle = dl ? `[${dl.slice(5).replace('-','/')}] 스피드 체험단 신청 설문지` : '설문지 제목';
+  const titleInput = document.getElementById('s-title');
+  if (!titleInput.dataset.manual) titleInput.value = autoTitle;
+  document.getElementById('prev-title').textContent = titleInput.value || autoTitle;
+  document.getElementById('prev-guide').textContent = document.getElementById('s-guide').value;
+  document.getElementById('prev-deadline').textContent = dl ? fmtDate(dl) : '-';
+  document.getElementById('prev-rdeadline').textContent = rdl ? fmtDate(rdl) : '-';
+  renderProductChoices();
+}
+document.getElementById('s-title').addEventListener('input', function(){this.dataset.manual='1';});
+
+function previewThumb() {
+  const url = document.getElementById('p-img').value;
+  const img = document.getElementById('thumb-preview');
+  if (url) { img.src = url; img.style.display = 'block'; }
+  else img.style.display = 'none';
 }
 
 function addProduct() {
-  const name = document.getElementById("newName").value.trim();
-  const link = document.getElementById("newLink").value.trim();
-  const imageUrl = document.getElementById("newImageUrl").value.trim();
-  if (!name || !link) { showAlert("⚠️","입력 필요","제품명과 쿠팡 링크를 입력해주세요."); return; }
-  if (!imageUrl) { showAlert("⚠️","이미지 주소 필요","쿠팡 이미지 우클릭 → 이미지 주소 복사 후 붙여넣어 주세요!"); return; }
-  products.push({ id: Date.now(), name, link, imageUrl });
+  const name = document.getElementById('p-name').value.trim();
+  const link = document.getElementById('p-link').value.trim();
+  const img = document.getElementById('p-img').value.trim();
+  if (!name) { toast('제품명을 입력해주세요'); return; }
+  products.push({name, link, img, id: Date.now()});
+  document.getElementById('p-name').value = '';
+  document.getElementById('p-link').value = '';
+  document.getElementById('p-img').value = '';
+  document.getElementById('thumb-preview').style.display = 'none';
   renderProducts();
-  document.getElementById("newName").value = "";
-  document.getElementById("newLink").value = "";
-  document.getElementById("newImageUrl").value = "";
+  updateSurveyPreview();
+  toast('✅ 제품이 추가되었습니다');
+}
+
+function removeProduct(id) {
+  products = products.filter(p => p.id !== id);
+  renderProducts();
+  updateSurveyPreview();
 }
 
 function renderProducts() {
-  const tbody = document.getElementById("productBody");
-  if (products.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-soft);padding:20px;font-size:13px">제품을 추가해주세요</td></tr>`;
+  const el = document.getElementById('product-list');
+  document.getElementById('product-count').textContent = products.length + '개';
+  if (!products.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">제품을 추가해주세요</div>';
     return;
   }
-  tbody.innerHTML = products.map((p, i) => `
-    <tr>
-      <td>
-        ${p.imageUrl
-          ? `<img src="${p.imageUrl}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1px solid var(--border)" onerror="this.style.display='none'" />`
-          : `<div class="img-placeholder">📦</div>`
-        }
-      </td>
-      <td><strong>${p.name}</strong></td>
-      <td><span class="link-text">${p.link}</span></td>
-      <td><button class="btn btn-danger btn-sm" onclick="removeProduct(${i})">삭제</button></td>
-    </tr>`).join("");
+  el.innerHTML = products.map(p => `
+    <div class="product-item">
+      ${p.img ? `<img class="product-thumb" src="${p.img}" alt="">` : `<div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>`}
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-link">${p.link || '링크 없음'}</div>
+      </div>
+      <span class="product-remove" onclick="removeProduct(${p.id})">×</span>
+    </div>`).join('');
 }
 
-function removeProduct(i) {
-  products.splice(i, 1);
-  renderProducts();
-}
-
-async function createGoogleForm() {
-  if (products.length === 0) { showAlert("⚠️","제품 없음","먼저 제품을 추가해주세요."); return; }
-  setLoadingText("구글 폼 생성 중...");
-  const result = await callScript("createForm", {
-    products,
-    deadline: document.getElementById("formDeadline").value,
-    reviewDeadline: document.getElementById("reviewDeadline").value
-  });
-  if (result.success) {
-    document.getElementById("formResultBox").style.display = "flex";
-    const link = document.getElementById("formResultLink");
-    link.href = result.formUrl;
-    link.textContent = result.formUrl;
-    showAlert("🎉","구글 폼 생성 완료!","폼이 생성되었습니다!\n링크를 복사해서 신청자들에게 공유하세요.");
-  } else {
-    showAlert("❌","생성 실패",result.message);
+function renderProductChoices() {
+  const el = document.getElementById('prev-product-choices');
+  const pp = document.getElementById('prev-products');
+  if (!products.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;">제품을 추가하면 선택지가 표시됩니다</div>';
+    pp.innerHTML = '';
+    return;
   }
+  el.innerHTML = products.map(p => `<div style="padding:4px 0;font-size:13px;">◯ ${p.name}</div>`).join('');
+  pp.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;">신청 가능 제품</div>` + products.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
+      ${p.img ? `<img src="${p.img}" style="width:44px;height:44px;border-radius:6px;object-fit:cover;">` : `<div style="width:44px;height:44px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;">📦</div>`}
+      <div>
+        <div style="font-size:13px;font-weight:600;">${p.name}</div>
+        ${p.link ? `<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--blue);">링크 보기 →</a>` : ''}
+      </div>
+    </div>`).join('');
 }
 
-// ========================================
-// TAB 2: 체험단 선정
-// ========================================
+async function generateForm() {
+  if (!products.length) { toast('제품을 먼저 추가해주세요'); return; }
+  if (!SCRIPT_URL) { toast('Apps Script URL을 먼저 설정해주세요'); return; }
+  toast('⏳ 구글 폼 생성 중...');
+  try {
+    const json = await postScript({
+      action: 'createForm',
+      title: document.getElementById('s-title').value,
+      guide: document.getElementById('s-guide').value,
+      deadline: document.getElementById('s-deadline').value,
+      reviewDeadline: document.getElementById('s-review-deadline').value,
+      products,
+    });
+    if (json.success) {
+      document.getElementById('form-link-result').style.display = 'block';
+      const a = document.getElementById('form-link');
+      a.href = json.formUrl; a.textContent = json.formUrl;
+      toast('🎉 구글 폼이 생성되었습니다!');
+    } else toast('⚠️ ' + json.error);
+  } catch(e) { toast('❌ ' + e.message); }
+}
+
+// ---- Select ----
+const sampleApplicants = [
+  {name:'김민지', phone:'010-1234-5678', sns:'https://instagram.com/minji', product:'오즈모 세럼', time:'2025-11-01 09:12'},
+  {name:'이수진', phone:'010-2345-6789', sns:'https://blog.naver.com/sujin', product:'오즈모 크림', time:'2025-11-01 09:35'},
+  {name:'박지현', phone:'010-3456-7890', sns:'https://instagram.com/jihyun', product:'오즈모 세럼', time:'2025-11-01 10:02'},
+  {name:'최유나', phone:'010-4567-8901', sns:'https://youtube.com/@yuna', product:'오즈모 앰플', time:'2025-11-01 10:45'},
+  {name:'정하은', phone:'010-5678-9012', sns:'https://instagram.com/haeun', product:'오즈모 크림', time:'2025-11-01 11:20'},
+  {name:'한소희', phone:'010-6789-0123', sns:'https://blog.naver.com/sohee', product:'오즈모 세럼', time:'2025-11-01 12:00'},
+];
+
 async function loadApplicants() {
-  setLoadingText("신청자 불러오는 중...");
-  const result = await callScript("getApplicants");
-  if (!result.success) { showAlert("❌","실패",result.message); return; }
-  applicants = result.applicants || [];
-  document.getElementById("totalCount").textContent = applicants.length;
-
-  // OMG + 최근 선정자 제외 계산
-  const excluded = applicants.filter(a => isExcluded(a)).length;
-  document.getElementById("excludeCount").textContent = excluded;
-  document.getElementById("eligibleCount").textContent = applicants.length - excluded;
-  showAlert("✅","불러오기 완료",`총 ${applicants.length}명의 신청자를 불러왔습니다.`);
+  const sid = document.getElementById('resp-sheet-id').value.trim();
+  if (!SCRIPT_URL) { applicants = [...sampleApplicants]; renderApplicants(); updateSelStats(); toast('ℹ️ 샘플 데이터 (Apps Script URL 미설정)'); return; }
+  toast('⏳ 신청자 불러오는 중...');
+  try {
+    const json = await callScript({ action: 'getApplicants', sheetId: sid });
+    if (json.success) { applicants = json.data; renderApplicants(); updateSelStats(); toast(`✅ ${applicants.length}명 불러왔습니다`); }
+    else { toast('⚠️ ' + json.error); }
+  } catch(e) { toast('❌ ' + e.message); }
 }
 
-function isExcluded(applicant) {
-  // OMG 리스트 체크
-  const name = applicant["성함"] || "";
-  const phone = applicant["전화번호"] || "";
-  if (omgList.some(o => o.name === name || o.phone === phone)) return true;
-  return false;
+function openSheet() {
+  const sid = document.getElementById('resp-sheet-id').value.trim();
+  if (sid) window.open(`https://docs.google.com/spreadsheets/d/${sid}`, '_blank');
+  else toast('시트 ID를 입력해주세요');
 }
 
-function selectMembers() {
-  const count = parseInt(document.getElementById("selectCount").value) || 20;
-  const eligible = applicants.filter(a => !isExcluded(a));
+function openReviewSheet() {
+  const sid = document.getElementById('review-sheet-id').value.trim();
+  if (sid) window.open(`https://docs.google.com/spreadsheets/d/${sid}`, '_blank');
+  else toast('시트 ID를 입력해주세요');
+}
 
-  // 무작위 또는 순서
-  let pool = [...eligible];
-  const method = document.getElementById("selectMethod").value;
-  if (method === "random") {
-    pool = pool.sort(() => Math.random() - 0.5);
-  }
-  selectedList = pool.slice(0, count);
+function updateSelStats() {
+  const omgPhones = omgList.map(o => o.phone);
+  const omgExcluded = applicants.filter(a => omgPhones.includes(a.phone));
+  const eligible = applicants.filter(a => !omgPhones.includes(a.phone));
+  document.getElementById('app-total').textContent = applicants.length;
+  document.getElementById('app-omg').textContent = omgExcluded.length;
+  document.getElementById('app-period').textContent = 0;
+  document.getElementById('app-eligible').textContent = eligible.length;
+}
 
-  document.getElementById("selectedBadge").textContent = `${selectedList.length}명 선정`;
-  document.getElementById("selectedBadge").className = "badge badge-green";
-  document.getElementById("sendTargetCount").value = `${selectedList.length}명`;
+function renderApplicants() {
+  const omgPhones = omgList.map(o => o.phone);
+  document.getElementById('applicant-body').innerHTML = applicants.map((a, i) => {
+    const isOMG = omgPhones.includes(a.phone);
+    return `<tr style="${isOMG ? 'background:var(--accent2-light);' : ''}">
+      <td>${i+1}</td><td>${a.name}</td><td>${a.phone}</td>
+      <td><a href="${a.sns}" target="_blank" style="color:var(--blue);font-size:12px;">링크</a></td>
+      <td style="font-size:12px;color:var(--text3);">${a.time}</td>
+      <td>${isOMG ? '<span class="badge badge-red">OMG 제외</span>' : '<span class="badge badge-green">선정 가능</span>'}</td>
+    </tr>`;
+  }).join('');
+}
 
-  const tbody = document.getElementById("selectedBody");
-  if (selectedList.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:20px">선정 가능한 신청자가 없습니다</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = selectedList.map((p, i) => `
+function doSelect() {
+  if (!applicants.length) { toast('신청자를 먼저 불러오세요'); return; }
+  const omgPhones = omgList.map(o => o.phone);
+  const count = parseInt(document.getElementById('sel-count').value) || 5;
+  const method = document.getElementById('sel-method').value;
+  let eligible = applicants.filter(a => !omgPhones.includes(a.phone));
+  if (method === 'random') eligible = eligible.sort(() => Math.random() - 0.5);
+  selectedResult = eligible.slice(0, count);
+
+  const productLinks = {};
+  products.forEach(p => { productLinks[p.name] = p.link; });
+
+  document.getElementById('result-body').innerHTML = selectedResult.map((a, i) => `
     <tr>
       <td>${i+1}</td>
-      <td><strong>${p["성함"] || "-"}</strong></td>
-      <td>${p["전화번호"] || "-"}</td>
-      <td>${p["신청 제품을 선택해 주세요"] || "-"}</td>
-      <td><span class="badge badge-green">✅ 선정</span></td>
-    </tr>`).join("");
+      <td class="copy-col">${a.name}</td>
+      <td class="copy-col">${a.phone}</td>
+      <td><a href="${a.sns}" target="_blank" style="color:var(--blue);font-size:12px;">링크</a></td>
+      <td>${a.product || '-'}</td>
+      <td style="font-size:12px;"><a href="${productLinks[a.product] || '#'}" target="_blank" style="color:var(--blue);">${productLinks[a.product] ? '링크' : '-'}</a></td>
+      <td><span class="badge badge-green">선정</span></td>
+    </tr>`).join('');
+  toast(`🎉 ${selectedResult.length}명이 선정되었습니다`);
 }
 
-async function saveSelectedAndGoNext() {
-  if (selectedList.length === 0) { showAlert("⚠️","선정 필요","먼저 자동 선정을 진행해주세요."); return; }
-  setLoadingText("선정 결과 저장 중...");
-  const deadline = document.getElementById("selectionReviewDeadline").value;
-  const result = await callScript("saveSelected", {
-    selected: selectedList.map(p => ({
-      name: p["성함"] || "",
-      phone: p["전화번호"] || "",
-      product: p["신청 제품을 선택해 주세요"] || ""
-    })),
-    reviewDeadline: deadline,
-    round: new Date().toLocaleDateString("ko-KR") + " 선정"
-  });
-  if (result.success) {
-    showAlert("✅","저장 완료!",result.message);
-    switchTab(2);
-  } else {
-    showAlert("❌","저장 실패",result.message);
-  }
+// ---- Copy column ----
+function copyCol(tableId, colName) {
+  const table = document.getElementById(tableId);
+  const headers = [...table.querySelectorAll('th')].map(th => th.textContent.trim());
+  const colIdx = headers.findIndex(h => h === colName || h.includes(colName));
+  if (colIdx < 0) { toast('해당 열을 찾을 수 없습니다'); return; }
+  const rows = [...table.querySelectorAll('tbody tr')];
+  const vals = rows.map(r => {
+    const cell = r.querySelectorAll('td')[colIdx];
+    return cell ? cell.textContent.trim() : '';
+  }).filter(v => v && v !== '자동 선정 버튼을 눌러주세요' && v !== '불러오기 버튼을 눌러주세요');
+  navigator.clipboard.writeText(vals.join('\n')).then(() => toast(`📋 ${colName} ${vals.length}개 복사됨`));
 }
 
-// ========================================
-// TAB 2: OMG 리스트
-// ========================================
-async function loadOMGList() {
-  const result = await callScript("getOmgList");
-  if (!result.success) return;
-  omgList = result.omgList || [];
-  renderOMGList();
-}
+// ---- Reviews ----
+const sampleReviews = [
+  {name:'김민지', phone:'010-1234-5678', product:'오즈모 세럼', url:'https://www.instagram.com/p/abc', mymall:'✅', mall:'✅', receipt:'✅', amount:'28900', account:'123-456-7890', holder:'김민지', bank:'카카오뱅크', deadline:'2025-11-20', status:'완료'},
+  {name:'이수진', phone:'010-2345-6789', product:'오즈모 크림', url:'-', mymall:'❌', mall:'❌', receipt:'❌', amount:'-', account:'-', holder:'-', bank:'-', deadline:'2025-11-20', status:'미완료'},
+];
 
-function renderOMGList() {
-  const el = document.getElementById("omgTagList");
-  if (omgList.length === 0) {
-    el.innerHTML = `<div style="font-size:12.5px;color:var(--text-soft)">등록된 OMG 없음</div>`;
-    return;
-  }
-  el.innerHTML = omgList.map(o => `
-    <div class="tag-item omg">${o.name} <small>×</small></div>`).join("");
-}
-
-async function addOMG() {
-  const name = document.getElementById("omgName").value.trim();
-  const phone = document.getElementById("omgPhone").value.trim();
-  if (!name) { showAlert("⚠️","이름 필요","이름을 입력해주세요."); return; }
-  setLoadingText("OMG 리스트에 추가 중...");
-  const result = await callScript("saveOmgList", { name, phone });
-  if (result.success) {
-    document.getElementById("omgName").value = "";
-    document.getElementById("omgPhone").value = "";
-    await loadOMGList();
-    showAlert("🚫","추가됨",result.message);
-  } else {
-    showAlert("❌","실패",result.message);
-  }
-}
-
-// ========================================
-// TAB 3: 문자 발송
-// ========================================
-async function sendMessages() {
-  if (selectedList.length === 0) { showAlert("⚠️","선정 필요","2단계에서 체험단을 먼저 선정해주세요."); return; }
-  setLoadingText("문자 발송 중...");
-  // 실제 솔라피 연동은 Apps Script에서 처리
-  const result = await callScript("sendSms", {
-    list: selectedList.map(p => ({
-      name: p["성함"] || "",
-      phone: p["전화번호"] || "",
-      product: p["신청 제품을 선택해 주세요"] || ""
-    })),
-    template: document.getElementById("msgTemplate").value,
-    shipDate: document.getElementById("shipDate").value,
-    deadline: document.getElementById("msgReviewDeadline").value,
-    msgType: document.getElementById("msgType").value
-  });
-  if (result.success) {
-    showAlert("📨","발송 완료!",result.message || `${selectedList.length}명에게 문자 발송을 완료했습니다.`);
-  } else {
-    // 솔라피 미설정 시 안내
-    showAlert("⚠️","솔라피 설정 필요","Apps Script Code.gs에 솔라피 API Key/Secret을 입력해주세요.\n설정 방법은 가이드를 참고하세요.");
-  }
-}
-
-// ========================================
-// TAB 4: 후기 확인
-// ========================================
 async function loadReviews() {
-  setLoadingText("스프레드시트에서 불러오는 중...");
-  const result = await callScript("getReviews");
-  if (!result.success) { showAlert("❌","실패",result.message); return; }
-  reviews = result.reviews || [];
-  renderReviews();
+  const sid = document.getElementById('review-sheet-id').value.trim();
+  if (!SCRIPT_URL) { reviews = [...sampleReviews]; renderReviews(); toast('ℹ️ 샘플 데이터 (Apps Script URL 미설정)'); return; }
+  toast('⏳ 후기 데이터 불러오는 중...');
+  try {
+    const json = await callScript({ action: 'getReviews', sheetId: sid });
+    if (json.success) { reviews = json.data; renderReviews(); toast(`✅ ${reviews.length}건 불러왔습니다`); }
+    else toast('⚠️ ' + json.error);
+  } catch(e) { toast('❌ ' + e.message); }
 }
 
 function renderReviews() {
-  const tbody = document.getElementById("reviewBody");
-  if (reviews.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:20px">데이터가 없습니다</td></tr>`;
-    return;
-  }
+  const done = reviews.filter(r => r.status === '완료').length;
+  const late = reviews.filter(r => r.status === '미완료').length;
+  document.getElementById('rev-done').textContent = done;
+  document.getElementById('rev-prog').textContent = reviews.length - done - late;
+  document.getElementById('rev-late').textContent = late;
+  document.getElementById('rev-total').textContent = reviews.length;
 
-  const today = new Date();
-  let done = 0, ing = 0, late = 0;
-
-  tbody.innerHTML = reviews.map((r, i) => {
-    const deadline = r["후기마감일"] ? new Date(r["후기마감일"]) : null;
-    const isLate = deadline && today > deadline && r["후기상태"] !== "완료";
-    const status = r["후기상태"] || "미제출";
-    if (status === "완료") done++;
-    else if (isLate) late++;
-    else ing++;
-
-    const rowClass = isLate ? "late-row" : "";
-    const lateBadge = isLate ? `<span class="late-badge">마감일미준수</span>` : "";
-
-    return `<tr class="${rowClass}">
-      <td><strong>${r["성함"] || "-"}</strong>${lateBadge}</td>
-      <td>${r["제품명"] || "-"}</td>
-      <td>${r["후기마감일"] || "-"}${isLate ? " ⚠️" : ""}</td>
-      <td class="${r["자사몰후기"]==="✅"?"check-ok":"check-no"}">${r["자사몰후기"] || "○"}</td>
-      <td class="${r["몰후기"]==="✅"?"check-ok":"check-no"}">${r["몰후기"] || "○"}</td>
-      <td class="${r["SNS후기"]==="✅"?"check-ok":"check-no"}">${r["SNS후기"] || "○"}</td>
-      <td>
-        <select onchange="updateReviewStatus(${r.rowIndex}, this.value, ${isLate})" style="border:none;background:none;font-size:12px;color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif">
-          <option ${status==="미제출"?"selected":""}>미제출</option>
-          <option ${status==="완료"?"selected":""}>완료</option>
-          <option ${status==="진행중"?"selected":""}>진행중</option>
-        </select>
-      </td>
-      <td>
-        <button class="btn btn-success btn-sm" onclick="markCheck(${r.rowIndex}, i, '자사몰후기')">자사</button>
-        <button class="btn btn-secondary btn-sm" onclick="markCheck(${r.rowIndex}, i, '몰후기')">몰</button>
-        <button class="btn btn-gold btn-sm" onclick="markCheck(${r.rowIndex}, i, 'SNS후기')">SNS</button>
-      </td>
-    </tr>`;
-  }).join("");
-
-  document.getElementById("reviewDoneCount").textContent = done;
-  document.getElementById("reviewIngCount").textContent = ing;
-  document.getElementById("reviewLateCount").textContent = late;
+  document.getElementById('review-body').innerHTML = reviews.map(r => `
+    <tr style="${r.status === '미완료' ? 'background:var(--accent2-light);' : ''}">
+      <td>${r.name}</td>
+      <td>${r.phone}</td>
+      <td>${r.product}</td>
+      <td><a href="${r.url !== '-' ? r.url : '#'}" target="_blank" style="color:var(--blue);font-size:12px;">${r.url !== '-' ? '보기' : '-'}</a></td>
+      <td style="text-align:center">${r.mymall}</td>
+      <td style="text-align:center">${r.mall}</td>
+      <td style="text-align:center">${r.receipt}</td>
+      <td>${r.amount !== '-' ? Number(r.amount).toLocaleString() + '원' : '-'}</td>
+      <td class="copy-col">${r.account}</td>
+      <td>${r.holder}</td>
+      <td>${r.bank}</td>
+      <td style="font-size:12px;">${r.deadline}</td>
+      <td><span class="badge ${r.status === '완료' ? 'badge-green' : 'badge-red'}">${r.status}</span></td>
+    </tr>`).join('');
 }
 
-async function updateReviewStatus(rowIndex, value, isLate) {
-  await callScript("updateReview", { rowIndex, column: "후기상태", value, isLate });
-}
-
-async function markCheck(rowIndex, listIdx, column) {
-  await callScript("updateReview", { rowIndex, column, value: "✅" });
-  await loadReviews();
-}
-
-async function addLateToOMG() {
-  const today = new Date();
-  const lateList = reviews.filter(r => {
-    const dl = r["후기마감일"] ? new Date(r["후기마감일"]) : null;
-    return dl && today > dl && r["후기상태"] !== "완료";
-  });
-  if (lateList.length === 0) { showAlert("✅","없음","마감 미준수자가 없습니다!"); return; }
-  for (const p of lateList) {
-    await callScript("saveOmgList", { name: p["성함"] || "", phone: p["전화번호"] || "", count: 1 });
-  }
-  await loadOMGList();
-  showAlert("🚫","완료",`${lateList.length}명이 OMG 리스트에 추가되었습니다.`);
-}
-
-// ========================================
-// TAB 5: 페이백
-// ========================================
-async function loadPaybackList() {
-  setLoadingText("후기 완료자 불러오는 중...");
-  const result = await callScript("getReviews");
-  if (!result.success) { showAlert("❌","실패",result.message); return; }
-  const completed = (result.reviews || []).filter(r => r["후기상태"] === "완료");
-  renderPaybackList(completed);
-}
-
-function renderPaybackList(list) {
-  const tbody = document.getElementById("paybackBody");
-  const amount = parseInt(document.getElementById("payAmount").value) || 0;
-  if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:20px">후기 완료자가 없습니다</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map(p => `
-    <tr>
-      <td><input type="checkbox" class="payCheck" checked onchange="updatePayTotal()"></td>
-      <td><strong>${p["성함"] || "-"}</strong></td>
-      <td>${p["전화번호"] || "-"}</td>
-      <td>${p["제품명"] || "-"}</td>
-      <td><span class="badge badge-green">✅ 완료</span></td>
-      <td><strong>${(amount).toLocaleString()}원</strong></td>
-    </tr>`).join("");
-  document.getElementById("payTotal").style.display = "flex";
-  updatePayTotal();
-}
-
-function updatePayTotal() {
-  const amount = parseInt(document.getElementById("payAmount").value) || 0;
-  const checked = document.querySelectorAll(".payCheck:checked").length;
-  document.getElementById("payTotalAmt").textContent = (checked * amount).toLocaleString() + "원";
-}
-
-function toggleAll() {
-  const all = document.getElementById("checkAll").checked;
-  document.querySelectorAll(".payCheck").forEach(c => c.checked = all);
-  updatePayTotal();
-}
-
-async function savePayback() {
-  const round = document.getElementById("payRound").value;
-  const amount = document.getElementById("payAmount").value;
-  const payDate = document.getElementById("payDate").value;
-  if (!round) { showAlert("⚠️","입력 필요","회차명을 입력해주세요."); return; }
-
-  const rows = document.querySelectorAll("#paybackBody tr");
-  const list = [];
-  rows.forEach((row, i) => {
-    const cb = row.querySelector(".payCheck");
-    if (cb && cb.checked) {
-      const tds = row.querySelectorAll("td");
-      list.push({
-        name: tds[1]?.textContent?.trim() || "",
-        phone: tds[2]?.textContent?.trim() || "",
-        product: tds[3]?.textContent?.trim() || ""
-      });
+function sendLateToOMG() {
+  const late = reviews.filter(r => r.status === '미완료');
+  if (!late.length) { toast('미준수자가 없습니다'); return; }
+  late.forEach(r => {
+    if (!omgList.find(o => o.phone === r.phone)) {
+      omgList.push({name: r.name, phone: r.phone, reason: '마감일 미준수', memo: '', id: Date.now() + Math.random()});
     }
   });
-  if (list.length === 0) { showAlert("⚠️","선택 필요","대상자를 선택해주세요."); return; }
+  saveOMG();
+  toast(`🚫 ${late.length}명을 OMG 리스트에 등록했습니다`);
+}
 
-  setLoadingText("페이백 저장 중...");
-  const result = await callScript("savePayback", { round, amount, payDate, list });
-  if (result.success) {
-    showAlert("💰","저장 완료!",result.message);
-  } else {
-    showAlert("❌","실패",result.message);
+// ---- OMG ----
+function saveOMG() {
+  localStorage.setItem('omg', JSON.stringify(omgList));
+  renderOMG();
+  document.getElementById('omg-count').textContent = omgList.length + '명';
+}
+
+function addOMG() {
+  const name = document.getElementById('omg-name').value.trim();
+  const phone = document.getElementById('omg-phone').value.trim();
+  const reason = document.getElementById('omg-reason').value;
+  const memo = document.getElementById('omg-memo').value.trim();
+  if (!name || !phone) { toast('이름과 전화번호를 입력해주세요'); return; }
+  if (omgList.find(o => o.phone === phone)) { toast('이미 등록된 번호입니다'); return; }
+  omgList.push({name, phone, reason, memo, id: Date.now()});
+  saveOMG();
+  document.getElementById('omg-name').value = '';
+  document.getElementById('omg-phone').value = '';
+  document.getElementById('omg-memo').value = '';
+  toast('🚫 OMG 리스트에 등록되었습니다');
+}
+
+function removeOMG(id) {
+  omgList = omgList.filter(o => o.id !== id);
+  saveOMG();
+  toast('✅ 제거되었습니다');
+}
+
+function renderOMG() {
+  const q = document.getElementById('omg-search').value.toLowerCase();
+  const filtered = omgList.filter(o => o.name.includes(q) || o.phone.includes(q));
+  document.getElementById('omg-count').textContent = omgList.length + '명';
+  const el = document.getElementById('omg-list');
+  if (!filtered.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:24px;">' + (q ? '검색 결과 없음' : '등록된 OMG가 없습니다') + '</div>';
+    return;
   }
+  el.innerHTML = filtered.map(o => `
+    <div class="omg-item">
+      <span class="omg-name">${o.name}</span>
+      <span class="omg-phone">${o.phone}</span>
+      <span class="badge badge-red omg-reason">${o.reason}</span>
+      ${o.memo ? `<span style="font-size:11px;color:var(--text3);">${o.memo}</span>` : ''}
+      <button class="btn btn-secondary btn-sm" onclick="removeOMG(${o.id})">제거</button>
+    </div>`).join('');
 }
 
-// ========================================
-// UI 유틸
-// ========================================
-function switchTab(n) {
-  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", i===n));
-  document.querySelectorAll(".tab-content").forEach((c,i) => c.classList.toggle("active", i===n));
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function showAlert(icon, title, msg) {
-  document.getElementById("alertIcon").textContent = icon;
-  document.getElementById("alertTitle").textContent = title;
-  document.getElementById("alertMsg").textContent = msg;
-  document.getElementById("alertModal").classList.add("show");
-}
-function closeAlert() { document.getElementById("alertModal").classList.remove("show"); }
-
-function showLoading() { document.getElementById("loadingModal").classList.add("show"); }
-function hideLoading() { document.getElementById("loadingModal").classList.remove("show"); }
-function setLoadingText(t) { document.getElementById("loadingText").textContent = t; showLoading(); }
+// ---- Init ----
+renderOMG();
+updateSurveyPreview();
+setDatePreset(30);
+if (SCRIPT_URL) document.getElementById('script-url').value = SCRIPT_URL;
 </script>
 </body>
 </html>
