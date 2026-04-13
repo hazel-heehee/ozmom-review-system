@@ -408,18 +408,18 @@ async function loadSheet(){
     const p={action:'getDashboard',sheetName:sname||'★자사몰 외 채널 후기'};
     if(from)p.from=from;if(to)p.to=to;
     const json=await callScript(p);
-    if(json.success){renderDashboard(json.data,json.calendar||{});toast(`✅ ${json.data.length}건 불러왔습니다`);}
+    if(json.success){renderDashboard(json.rows||[],json.stats||{},json.calendar||{});toast(`✅ ${(json.rows||[]).length}건 불러왔습니다`);}
     else toast('⚠️ '+json.error);
   }catch(e){toast('❌ '+e.message);}
 }
 
-function renderDashboard(data,calData){
+function renderDashboard(data,stats,calData){
   dashData=data;calendarData=calData;
-  const total=data.length;
-  const done=data.filter(r=>r.status==='진행완료').length;
-  const prog=data.filter(r=>r.status==='진행중').length;
-  const rec=data.filter(r=>r.status==='섭외중').length;
-  const pend=data.filter(r=>r.status==='입금대기').length;
+  const total=(stats&&stats.total!==undefined)?stats.total:data.length;
+    const done=(stats&&stats.done!==undefined)?stats.done:data.filter(r=>r.status==='진행완료').length;
+    const prog=(stats&&stats.inProgress!==undefined)?stats.inProgress:data.filter(r=>r.status==='진행중').length;
+    const rec=(stats&&stats.selected!==undefined)?stats.selected:data.filter(r=>r.status==='섭외중').length;
+    const pend=(stats&&stats.pending!==undefined)?stats.pending:data.filter(r=>r.status==='입금대기').length;
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-done').textContent=done;
   document.getElementById('stat-progress').textContent=prog;
