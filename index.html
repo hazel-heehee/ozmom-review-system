@@ -107,21 +107,6 @@ tr:hover td{background:var(--surface2)}
     <button class="btn btn-blue" onclick="window.open('https://docs.google.com/spreadsheets/d/1fhdHU7Y5a_EDr8fATJ3OMyhlWqWFPGpCHSUCm7fxIRI','_blank')">📄 원본 스프레드시트</button>
   </div>
 
-  <div class="card" style="border:1.5px solid var(--accent);background:var(--accent-light);margin-bottom:12px;">
-    <div class="card-title" style="color:var(--accent);">⚙️ Apps Script 연결</div>
-    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;" class="form-row">
-        <label>Apps Script 배포 URL</label>
-        <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/xxxxxx/exec" oninput="saveScriptUrl()">
-      </div>
-      <div style="min-width:180px;" class="form-row">
-        <label>시트 이름</label>
-        <input type="text" id="sheet-name" value="★자사몰 외 채널 후기">
-      </div>
-      <button class="btn btn-primary" style="margin-bottom:14px;" onclick="loadSheet()">🔗 불러오기</button>
-    </div>
-  </div>
-
   <div class="card" style="margin-bottom:12px;">
     <div class="filter-bar">
       <label>C열 기준 시작일</label>
@@ -131,7 +116,7 @@ tr:hover td{background:var(--surface2)}
       <button class="btn btn-secondary btn-sm" onclick="setDatePreset(7)">7일</button>
       <button class="btn btn-secondary btn-sm" onclick="setDatePreset(30)">30일</button>
       <button class="btn btn-secondary btn-sm" onclick="setDatePreset(90)">90일</button>
-      <button class="btn btn-primary btn-sm" onclick="loadSheet()">적용</button>
+      <button class="btn btn-primary btn-sm" onclick="loadSheet()">🔗 불러오기</button>
     </div>
   </div>
 
@@ -213,7 +198,7 @@ tr:hover td{background:var(--surface2)}
       <div class="card-title">등록된 제품 <span id="product-count" style="font-weight:400;color:var(--text3)">0개</span></div>
       <div id="product-list"><div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">제품을 추가해주세요</div></div>
     </div>
-    <button class="btn btn-primary btn-full" style="font-size:15px;padding:14px;" onclick="generateForm()">🚀 구글 폼 내용 생성 + 새창 열기</button>
+    <button class="btn btn-primary btn-full" style="font-size:15px;padding:14px;" onclick="generateForm()">🚀 구글 폼 자동 생성</button>
     <div id="form-link-result" style="display:none;margin-top:12px;"></div>
   </div>
   <div>
@@ -375,7 +360,7 @@ let products=[], omgList=JSON.parse(localStorage.getItem('omg')||'[]');
 let applicants=[], selectedResult=[], reviews=[];
 let dashData=[], calendarData={}, calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
 let chartMode='pie', chartInstance=null;
-let SCRIPT_URL=localStorage.getItem('scriptUrl')||'';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw8TCHVMxySIkZDoJD1C49kZsGgho7lTm7Sd-WrGT-TrySyMAFPhfnau-9WgkV8RQtF/exec';
 
 // ── 네비게이션 ──
 function goPage(id,el){
@@ -393,33 +378,39 @@ function setDatePreset(days){const to=new Date(),from=new Date();from.setDate(fr
 function fmtDate(d){if(!d)return'-';const o=new Date(d);return isNaN(o)?d:o.toLocaleDateString('ko-KR');}
 
 // ── Apps Script ──
-function saveScriptUrl(){SCRIPT_URL=document.getElementById('script-url').value.trim();localStorage.setItem('scriptUrl',SCRIPT_URL);}
-async function callScript(params){if(!SCRIPT_URL)throw new Error('URL 미설정');const res=await fetch(SCRIPT_URL+'?'+new URLSearchParams(params).toString());return res.json();}
-async function postScript(body){if(!SCRIPT_URL)throw new Error('URL 미설정');const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return res.json();}
+function saveScriptUrl(){}
+async function callScript(params){
+  const url=SCRIPT_URL+'?'+new URLSearchParams(params).toString();
+  const res=await fetch(url);
+  return res.json();
+}
+async function postScript(body){
+  const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return res.json();
+}
 
 // ── 대시보드 ──
 async function loadSheet(){
-  const sname=document.getElementById('sheet-name').value.trim();
   const from=document.getElementById('date-from').value;
   const to=document.getElementById('date-to').value;
-  if(!SCRIPT_URL){toast('⚠️ Apps Script URL을 먼저 입력해주세요');return;}
   toast('⏳ 데이터 불러오는 중...');
   try{
-    const p={action:'getDashboard',sheetName:sname||'★자사몰 외 채널 후기'};
-    if(from)p.from=from;if(to)p.to=to;
+    const p={action:'getDashboard',sheetName:'★자사몰 외 채널 후기'};
+    if(from)p.from=from;
+    if(to)p.to=to;
     const json=await callScript(p);
-    if(json.success){renderDashboard(json.rows||[],json.stats||{},json.calendar||{});toast(`✅ ${(json.rows||[]).length}건 불러왔습니다`);}
+    if(json.success){renderDashboard(json.data,json.calendar||{});toast(`✅ ${json.data.length}건 불러왔습니다`);}
     else toast('⚠️ '+json.error);
   }catch(e){toast('❌ '+e.message);}
 }
 
-function renderDashboard(data,stats,calData){
+function renderDashboard(data,calData){
   dashData=data;calendarData=calData;
-  const total=(stats&&stats.total!==undefined)?stats.total:data.length;
-    const done=(stats&&stats.done!==undefined)?stats.done:data.filter(r=>r.status==='진행완료').length;
-    const prog=(stats&&stats.inProgress!==undefined)?stats.inProgress:data.filter(r=>r.status==='진행중').length;
-    const rec=(stats&&stats.selected!==undefined)?stats.selected:data.filter(r=>r.status==='섭외중').length;
-    const pend=(stats&&stats.pending!==undefined)?stats.pending:data.filter(r=>r.status==='입금대기').length;
+  const total=data.length;
+  const done=data.filter(r=>r.status==='진행완료').length;
+  const prog=data.filter(r=>r.status==='진행중').length;
+  const rec=data.filter(r=>r.status==='섭외중').length;
+  const pend=data.filter(r=>r.status==='입금대기').length;
   document.getElementById('stat-total').textContent=total;
   document.getElementById('stat-done').textContent=done;
   document.getElementById('stat-progress').textContent=prog;
@@ -747,9 +738,7 @@ renderOMG();
 updateSurveyPreview();
 setDatePreset(30);
 renderCalendar();
-if(SCRIPT_URL){
-  document.getElementById('script-url').value=SCRIPT_URL;
-}
+loadSheet();
 </script>
 </body>
 </html>
