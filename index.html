@@ -3,742 +3,813 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OzMom 체험단 관리 시스템</title>
+<title>OZKIZ 서포터즈</title>
 <style>
-:root{--bg:#f5f4f0;--surface:#fff;--surface2:#f9f8f5;--border:#e8e6e0;--border2:#d4d0c8;--text:#1a1917;--text2:#6b6860;--text3:#9e9b95;--accent:#2d6a4f;--accent-light:#e8f4ee;--accent2:#b5451b;--accent2-light:#fdf0eb;--blue:#1a56a0;--blue-light:#eaf1fb;--amber:#92470a;--amber-light:#fef4e8;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.06)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
-.app{display:flex;min-height:100vh}
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;position:fixed;top:0;left:0;height:100vh;z-index:100;display:flex;flex-direction:column}
-.logo{padding:0 20px 24px;border-bottom:1px solid var(--border)}
-.logo-title{font-size:15px;font-weight:700}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.nav{flex:1;padding:16px 0}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
-.nav-item:hover{background:var(--bg);color:var(--text)}
-.nav-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent)}
-.main{margin-left:220px;flex:1}
-.page{display:none;padding:32px;max-width:1100px}
-.page.active{display:block}
-.page-title{font-size:22px;font-weight:700}
-.page-desc{font-size:13px;color:var(--text2);margin-top:4px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
-.card-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:16px;text-transform:uppercase;letter-spacing:.04em}
-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
-input[type=text],input[type=date],input[type=number],input[type=tel],textarea,select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--surface2);outline:none;font-family:inherit;transition:border-color .15s}
-input:focus,textarea:focus,select:focus{border-color:var(--accent);background:#fff}
-textarea{resize:vertical;min-height:80px}
-.form-row{margin-bottom:14px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#235540}
-.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border2)}.btn-secondary:hover{background:var(--bg)}
-.btn-danger{background:var(--accent2-light);color:var(--accent2);border:1px solid #f0c4b2}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#154580}
-.btn-sm{padding:6px 12px;font-size:12px}
-.btn-full{width:100%;justify-content:center}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.stat-value{font-size:26px;font-weight:700;color:var(--text);margin-top:4px}
-.stat-card.green .stat-value{color:var(--accent)}
-.stat-card.red .stat-value{color:var(--accent2)}
-.stat-card.blue .stat-value{color:var(--blue)}
-.stat-card.amber .stat-value{color:var(--amber)}
-.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap}
-td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--surface2)}
-.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.badge-green{background:var(--accent-light);color:var(--accent)}
-.badge-red{background:var(--accent2-light);color:var(--accent2)}
-.badge-blue{background:var(--blue-light);color:var(--blue)}
-.badge-amber{background:var(--amber-light);color:var(--amber)}
-.badge-gray{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
-.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.filter-bar label{margin:0;white-space:nowrap}
-.filter-bar input[type=date]{width:auto}
-.progress-wrap{background:var(--border);border-radius:99px;height:6px;overflow:hidden}
-.progress-bar{height:6px;border-radius:99px;transition:width .4s}
-.notice{background:var(--blue-light);border:1px solid #c0d8f5;border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:var(--blue);margin-bottom:16px}
-.notice strong{font-weight:700}
-.product-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
-.product-thumb{width:64px;height:64px;border-radius:6px;object-fit:cover;background:var(--border);flex-shrink:0}
-.product-info{flex:1}
-.product-name{font-weight:600;font-size:13px}
-.product-link{font-size:11px;color:var(--text3);word-break:break-all}
-.product-remove{cursor:pointer;color:var(--text3);font-size:18px;line-height:1;padding:2px 6px}
-.product-remove:hover{color:var(--accent2)}
-.survey-preview{border:1px solid var(--border2);border-radius:var(--radius);padding:20px;background:#fafafa}
-.survey-field{background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
-.survey-field-label{font-weight:600;font-size:13px;margin-bottom:6px}
-.survey-field-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:13px;color:var(--text3)}
-.omg-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--accent2-light);border:1px solid #f0c4b2;border-radius:var(--radius-sm);margin-bottom:8px;font-size:13px}
-.omg-item .omg-name{font-weight:600;min-width:70px}
-.omg-item .omg-phone{color:var(--text2);flex:1}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:9999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:360px}
-.toast.show{opacity:1;transform:translateY(0)}
-.copy-all-wrap{display:flex;justify-content:flex-end;margin-bottom:8px;gap:6px;flex-wrap:wrap}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+:root{--red:#E24B4A;--red2:#C73938;--rl:#FFF0F0;--rd:#7A1F1F;--rm:#C03030;}
+body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
+.app{width:100%;max-width:420px;min-height:100vh;background:#F7F7F8;display:flex;flex-direction:column;position:relative;}
+@media(min-width:480px){body{align-items:center;padding:20px;}.app{min-height:auto;border-radius:28px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.18);}}
+.screen{display:none;flex-direction:column;flex:1;min-height:100vh;padding-bottom:72px;}
+.screen.active{display:flex;}
+.topbar{background:var(--red);color:#fff;flex-shrink:0;}
+.tb-main{padding:14px 16px 40px;}
+.tb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.back-pill{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;color:#fff;cursor:pointer;border:none;}
+.tb-greeting{font-size:12px;opacity:.82;margin-bottom:3px;}
+.tb-title{font-size:19px;font-weight:800;letter-spacing:.01em;}
+.tb-sub{font-size:12px;opacity:.82;margin-top:2px;}
+.body{margin-top:-22px;padding:0 14px 14px;display:flex;flex-direction:column;gap:11px;}
+.card{background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 2px 14px rgba(0,0,0,.07);}
+.card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:10px;}
+.sec{font-size:11px;font-weight:800;color:#999;letter-spacing:.04em;}
+.pill{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap;}
+.p-red{background:#FFEBEB;color:#C03030;}
+.p-green{background:#E8F5E9;color:#2E7D32;}
+.p-blue{background:#E3F2FD;color:#1565C0;}
+.p-orange{background:#FFF3E0;color:#E65100;}
+.p-gray{background:#F5F5F5;color:#777;}
+.p-purple{background:#EDE7F6;color:#4527A0;}
+.btn{width:100%;padding:14px;border-radius:14px;font-size:14px;font-weight:800;border:none;cursor:pointer;text-align:center;letter-spacing:.01em;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-out{background:#fff;border:2px solid var(--red);color:var(--red);}
+.btn-gray{background:#F0F0F0;color:#888;}
+.btn-sm{background:var(--red);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.btn-sm-out{background:#fff;border:1.5px solid #E0E0E0;color:#666;border-radius:10px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;}
+
+/* 하단 탭바 */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;background:#fff;border-top:1px solid #EEEEEE;padding:8px 0 14px;z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#CCC;cursor:pointer;}
+.nav-item.on{color:var(--red);}
+.nav-dot{width:22px;height:22px;border-radius:7px;background:currentColor;opacity:.18;}
+.nav-item.on .nav-dot{opacity:1;}
+
+/* ===== 로그인 ===== */
+.login-hero{background:var(--red);padding:52px 24px 40px;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.logo-box{width:64px;height:64px;border-radius:18px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
+.logo-txt{font-size:22px;font-weight:900;color:#fff;letter-spacing:.12em;}
+.logo-sub{font-size:13px;color:rgba(255,255,255,.78);}
+.login-badge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:11px;color:rgba(255,255,255,.92);margin-top:4px;}
+.login-form{flex:1;background:#fff;border-radius:28px 28px 0 0;margin-top:-16px;padding:22px 18px;display:flex;flex-direction:column;gap:13px;}
+.f-label{font-size:11px;font-weight:800;color:#888;margin-bottom:4px;}
+.f-input{width:100%;background:#F7F7F8;border:1.5px solid #EEEEEE;border-radius:12px;padding:12px 14px;font-size:14px;color:#222;outline:none;transition:border-color .2s;}
+.f-input:focus{border-color:var(--red);background:#fff;}
+.f-row{display:flex;gap:8px;}
+.f-send{background:var(--red);color:#fff;border:none;border-radius:12px;padding:0 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.login-hint{font-size:12px;color:#BBB;text-align:center;line-height:1.7;}
+
+/* ===== 캠페인 홈 ===== */
+.quota-bar{background:#fff;border-radius:16px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.camp-hero{background:var(--red);border-radius:18px;padding:16px 16px 14px;color:#fff;position:relative;overflow:hidden;cursor:pointer;}
+.ch-deco{position:absolute;right:-10px;top:-10px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08);}
+.ch-deco2{position:absolute;right:14px;bottom:-22px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.06);}
+.ch-tag{background:rgba(255,255,255,.2);border-radius:8px;padding:3px 9px;font-size:10px;color:#fff;display:inline-block;margin-bottom:7px;}
+.ch-name{font-size:15px;font-weight:800;margin-bottom:3px;}
+.ch-sub{font-size:11px;opacity:.82;margin-bottom:10px;}
+.ch-pills{display:flex;gap:6px;}
+.ch-pill{background:rgba(255,255,255,.18);border-radius:8px;padding:3px 9px;font-size:10px;color:#fff;}
+
+/* 진행 스텝 — 4단계 */
+.step-track{display:flex;flex-direction:column;gap:0;}
+.step-row{display:flex;align-items:flex-start;gap:10px;}
+.step-col{display:flex;flex-direction:column;align-items:center;}
+.sdot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+.sd-done{background:#E8F5E9;color:#2E7D32;}
+.sd-cur{background:var(--red);color:#fff;box-shadow:0 0 0 3px rgba(226,75,74,.2);}
+.sd-todo{background:#F0F0F0;color:#CCCCCC;}
+.step-line{width:2px;height:14px;background:#EEEEEE;margin:2px 0;}
+.step-line.done{background:#C8E6C9;}
+.step-content{padding-top:3px;flex:1;}
+.st-name{font-size:13px;font-weight:800;color:#111;}
+.st-name.cur{color:var(--red);}
+.st-name.muted{color:#BBBBBB;}
+.st-sub{font-size:11px;color:#AAA;margin-top:2px;}
+.st-sub.cur{color:rgba(226,75,74,.8);}
+
+/* ===== 캠페인 선택 ===== */
+.camp-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);border:2px solid transparent;cursor:pointer;transition:border-color .2s;}
+.camp-card.sel{border-color:var(--red);}
+.camp-img{height:88px;display:flex;align-items:center;justify-content:center;position:relative;}
+.camp-img-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;}
+.camp-check{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.cc-sel{background:var(--red);color:#fff;}
+.cc-def{background:rgba(255,255,255,.8);border:2px solid #DDD;color:transparent;}
+.camp-body{padding:11px 14px;}
+.camp-name{font-size:14px;font-weight:800;color:#111;margin-bottom:3px;}
+.camp-desc{font-size:12px;color:#888;margin-bottom:8px;}
+.camp-summary{background:var(--rl);border-radius:12px;padding:10px 14px;border:1px solid rgba(226,75,74,.2);}
+
+/* ===== 제품 선택 ===== */
+.prod-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);border:2px solid transparent;cursor:pointer;}
+.prod-card.sel{border-color:var(--red);}
+.prod-img{height:84px;display:flex;align-items:center;justify-content:center;position:relative;}
+.prod-img-box{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.5);}
+.prod-stk{position:absolute;top:8px;right:9px;}
+.prod-ch-tag{position:absolute;top:8px;left:9px;background:rgba(255,255,255,.92);border-radius:8px;padding:2px 8px;font-size:10px;font-weight:800;color:var(--rd);}
+.prod-body{padding:10px 13px;}
+.prod-name{font-size:13px;font-weight:800;color:#111;margin-bottom:3px;}
+.prod-price{font-size:12px;color:#888;margin-bottom:7px;}
+.prod-price strong{color:var(--red);}
+.prod-ch-row{display:flex;align-items:center;gap:5px;background:#F7F7F8;border-radius:8px;padding:5px 9px;margin-bottom:8px;font-size:11px;}
+.prod-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.qty-wrap{display:flex;align-items:center;background:#F7F7F8;border-radius:10px;overflow:hidden;}
+.qb{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#333;border:none;background:transparent;cursor:pointer;}
+.qn{width:26px;text-align:center;font-size:13px;font-weight:800;color:#111;}
+.sel-btn{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:7px 0;font-size:12px;font-weight:800;cursor:pointer;}
+.sel-btn.done{background:#2E7D32;}
+
+/* ===== 신청 윈도우 ===== */
+.countdown-box{background:#F7F7F8;border-radius:14px;padding:14px;text-align:center;}
+.cd-label{font-size:12px;color:#888;margin-bottom:5px;}
+.cd-time{font-size:32px;font-weight:900;color:var(--red);letter-spacing:.05em;}
+.cd-sub{font-size:11px;color:#AAA;margin-top:4px;}
+.prog-wrap{height:6px;background:#EEE;border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.prog-fill{height:100%;background:var(--red);border-radius:3px;}
+.prog-labels{display:flex;justify-content:space-between;font-size:10px;color:#AAA;}
+.score-bar-bg{flex:1;height:8px;background:#EEE;border-radius:4px;overflow:hidden;}
+.score-bar-fill{height:100%;background:var(--red);border-radius:4px;}
+
+/* ===== 후기 제출 ===== */
+.review-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F5F5F5;}
+.review-row:last-child{border-bottom:none;}
+.review-icon{width:28px;height:28px;border-radius:8px;background:var(--rl);flex-shrink:0;}
+.url-input{width:100%;background:#F7F7F8;border:1.5px solid #EEE;border-radius:11px;padding:10px 13px;font-size:13px;color:#AAA;outline:none;}
+.url-input:focus{border-color:var(--red);color:#222;background:#fff;}
+.upload-box{background:#F7F7F8;border:2px dashed #DDD;border-radius:12px;padding:16px;text-align:center;font-size:13px;color:#AAA;cursor:pointer;}
+.upload-box.done{background:#E8F5E9;border-color:#81C784;color:#2E7D32;}
+
+/* ===== 페이백 ===== */
+.amount-box{background:var(--rl);border-radius:14px;padding:16px;}
+.amount-label{font-size:12px;font-weight:800;color:var(--rd);margin-bottom:4px;}
+.amount-num{font-size:30px;font-weight:900;color:var(--rd);}
+.amount-sub{font-size:12px;color:var(--rm);margin-top:4px;}
+.f-input-sm{width:100%;background:#F7F7F8;border:1.5px solid #EEE;border-radius:11px;padding:10px 13px;font-size:13px;color:#AAA;outline:none;}
+.f-input-sm:focus{border-color:var(--red);}
+
+/* ===== 마이페이지 ===== */
+.my-hero{background:var(--red);padding:20px 16px 46px;}
+.my-av-row{display:flex;align-items:center;gap:14px;}
+.my-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;}
+.my-name{font-size:16px;font-weight:900;color:#fff;}
+.my-phone{font-size:12px;color:rgba(255,255,255,.72);margin-top:3px;}
+.gold-badge{background:rgba(255,255,255,.2);border-radius:7px;padding:2px 8px;font-size:10px;color:#fff;font-weight:800;margin-left:5px;}
+
+/* 현황 보드 */
+.board{display:flex;gap:0;align-items:flex-start;padding:4px 0 6px;}
+.b-col{flex-shrink:0;width:60px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.b-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.bd-done{background:#E8F5E9;color:#2E7D32;}
+.bd-cur{background:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(226,75,74,.15);}
+.bd-todo{background:#F0F0F0;color:#CCCCCC;}
+.b-label{font-size:9px;font-weight:700;text-align:center;color:#AAA;line-height:1.3;}
+.b-label.done{color:#2E7D32;}
+.b-label.cur{color:var(--red);font-weight:900;}
+.b-conn{width:22px;height:2px;background:#EEE;margin-top:16px;flex-shrink:0;}
+.b-conn.done{background:#C8E6C9;}
+.board-now{background:var(--rl);border-radius:10px;padding:8px 12px;margin-top:8px;display:flex;align-items:center;gap:7px;}
+.bn-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 1.5s infinite;}
+.bn-txt{font-size:11px;color:var(--rd);font-weight:800;flex:1;}
+
+/* 진행 건 카드 */
+.active-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.ac-head{background:var(--rl);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;}
+.ac-head-name{font-size:13px;font-weight:800;color:var(--rd);}
+.ac-head-step{font-size:11px;color:var(--red);font-weight:700;}
+.ac-body{padding:12px 16px;display:flex;flex-direction:column;gap:9px;}
+.ac-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
+.ac-label{color:#888;}
+.ac-val{font-weight:800;color:#111;}
+.ac-divider{height:1px;background:#F5F5F5;}
+.ac-action{padding:11px 16px;border-top:1px solid #F5F5F5;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.ac-action-txt{font-size:11px;color:#888;line-height:1.5;}
+
+/* 통계 */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.stat-box{background:#fff;border-radius:14px;padding:11px 6px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.sn{font-size:22px;font-weight:900;color:#111;}
+.sl{font-size:10px;color:#999;margin-top:3px;}
+.menu-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.mi{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #F5F5F5;font-size:13px;color:#111;cursor:pointer;}
+.mi:last-child{border-bottom:none;}
+.mi-arr{color:#DDD;font-size:15px;}
+
+/* 알림 */
+.notif-row{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid #F5F5F5;}
+.notif-row:last-child{border-bottom:none;}
+.nd{width:9px;height:9px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;}
+.nd.read{background:#DDD;}
+.nt{font-size:13px;color:#111;line-height:1.55;}
+.ntime{font-size:11px;color:#BBB;margin-top:3px;}
+
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="sidebar">
-  <div class="logo">
-    <div class="logo-title">🍊 OzMom</div>
-    <div class="logo-sub">체험단 관리 시스템 v2</div>
-  </div>
-  <nav class="nav">
-    <div class="nav-item active" onclick="goPage('dashboard',this)"><span>📊</span> 대시보드</div>
-    <div class="nav-item" onclick="goPage('survey',this)"><span>📋</span> 설문지 생성</div>
-    <div class="nav-item" onclick="goPage('select',this)"><span>🎯</span> 체험단 선정</div>
-    <div class="nav-item" onclick="goPage('kakao',this)"><span>💬</span> 알림톡 발송</div>
-    <div class="nav-item" onclick="goPage('review',this)"><span>✅</span> 후기 확인</div>
-    <div class="nav-item" onclick="goPage('omg',this)"><span>🚫</span> OMG 리스트</div>
-  </nav>
-</aside>
-<main class="main">
 
-<!-- ===== 대시보드 ===== -->
-<div id="page-dashboard" class="page active">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-    <div><div class="page-title">📊 대시보드</div><div class="page-desc">C열(헤이즐요청일자) 기준 · 채널별 · 진행상황 현황</div></div>
-    <button class="btn btn-blue" onclick="window.open('https://docs.google.com/spreadsheets/d/1fhdHU7Y5a_EDr8fATJ3OMyhlWqWFPGpCHSUCm7fxIRI','_blank')">📄 원본 스프레드시트</button>
+<!-- ① 로그인 -->
+<div class="screen active" id="s-login" style="padding-bottom:0;">
+  <div class="login-hero">
+    <div class="logo-box">
+      <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:.08em;">OZ</div>
+    </div>
+    <div class="logo-txt">OZKIZ</div>
+    <div class="logo-sub">서포터즈 전용 플랫폼</div>
+    <div class="login-badge">초대받은 서포터즈 전용</div>
   </div>
+  <div class="login-form">
+    <div>
+      <div class="f-label">이름</div>
+      <input class="f-input" id="login-name" type="text" placeholder="이름을 입력하세요">
+    </div>
+    <div>
+      <div class="f-label">휴대폰 번호</div>
+      <input class="f-input" id="login-phone" type="tel" placeholder="010-0000-0000">
+    </div>
+    <div>
+      <div class="f-label">인증번호</div>
+      <div class="f-row">
+        <input class="f-input" id="login-code" type="text" placeholder="6자리 입력" style="flex:1;">
+        <button class="f-send" onclick="sendSMS()">발송</button>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="doLogin()" style="margin-top:4px;">로그인 / 가입하기</button>
+    <div class="login-hint">이름과 전화번호가 일치하면<br>자동으로 가입돼요</div>
+  </div>
+</div>
 
-  <div class="card" style="margin-bottom:12px;">
-    <div class="filter-bar">
-      <label>C열 기준 시작일</label>
-      <input type="date" id="date-from" style="width:150px">
-      <label>종료일</label>
-      <input type="date" id="date-to" style="width:150px">
-      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(7)">7일</button>
-      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(30)">30일</button>
-      <button class="btn btn-secondary btn-sm" onclick="setDatePreset(90)">90일</button>
-      <button class="btn btn-primary btn-sm" onclick="loadSheet()">🔗 불러오기</button>
+<!-- ② 캠페인 홈 -->
+<div class="screen" id="s-home">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-greeting" id="home-greeting">안녕하세요!</div>
+      <div class="tb-title">OZKIZ 서포터즈</div>
     </div>
   </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">전체</div><div class="stat-value" id="stat-total">-</div></div>
-    <div class="stat-card green"><div class="stat-label">진행완료</div><div class="stat-value" id="stat-done">-</div></div>
-    <div class="stat-card blue"><div class="stat-label">진행중</div><div class="stat-value" id="stat-progress">-</div></div>
-    <div class="stat-card amber"><div class="stat-label">섭외중</div><div class="stat-value" id="stat-recruiting">-</div></div>
-    <div class="stat-card red"><div class="stat-label">입금대기</div><div class="stat-value" id="stat-pending">-</div></div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;margin-bottom:16px;">
+  <div class="body">
+    <div class="quota-bar">
+      <div>
+        <div style="font-size:11px;color:#888;">내 구매 한도</div>
+        <div style="font-size:14px;font-weight:800;">최대 <span style="color:var(--red);">2개</span> 구매 가능</div>
+      </div>
+      <span class="pill p-red">1개 남음</span>
+    </div>
+    <div class="sec">진행 중인 캠페인</div>
+    <div class="camp-hero" onclick="goTo('s-campaign')">
+      <div class="ch-deco"></div><div class="ch-deco2"></div>
+      <div class="ch-tag">체험단 모집 중</div>
+      <div class="ch-name">2025 봄 신상 체험단</div>
+      <div class="ch-sub">구매금액 전액 환급 · 후기 3종 필수</div>
+      <div class="ch-pills">
+        <span class="ch-pill">마감 D-5</span>
+        <span class="ch-pill">신청 18명</span>
+      </div>
+    </div>
+    <div class="sec">내 진행 상태</div>
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div class="card-title" style="margin:0;">진행상황</div>
-        <div style="display:flex;gap:4px;">
-          <button class="btn btn-secondary btn-sm" id="btn-pie" onclick="switchChart('pie')" style="background:var(--accent-light);color:var(--accent);">원형</button>
-          <button class="btn btn-secondary btn-sm" id="btn-bar" onclick="switchChart('bar')">막대</button>
+      <div class="step-track">
+        <div class="step-row">
+          <div class="step-col">
+            <div class="sdot sd-done">✓</div>
+            <div class="step-line done"></div>
+          </div>
+          <div class="step-content" style="padding-bottom:10px;">
+            <div class="st-name">신청 완료</div>
+            <div class="st-sub">4/14 오전 10:38 · 100점으로 신청</div>
+          </div>
+          <span class="pill p-green" style="font-size:9px;margin-top:3px;">완료</span>
+        </div>
+        <div class="step-row">
+          <div class="step-col">
+            <div class="sdot sd-done">✓</div>
+            <div class="step-line done"></div>
+          </div>
+          <div class="step-content" style="padding-bottom:10px;">
+            <div class="st-name">선발 · 제품 선택</div>
+            <div class="st-sub">바람막이 점퍼 38,000원 선택됨</div>
+          </div>
+          <span class="pill p-green" style="font-size:9px;margin-top:3px;">완료</span>
+        </div>
+        <div class="step-row">
+          <div class="step-col">
+            <div class="sdot sd-cur">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content" style="padding-bottom:10px;">
+            <div class="st-name cur">후기 작성 중</div>
+            <div class="st-sub cur">자사몰 완료 · 구매몰·SNS 2개 남음</div>
+          </div>
+          <span class="pill p-red" style="font-size:9px;margin-top:3px;">진행중</span>
+        </div>
+        <div class="step-row">
+          <div class="step-col">
+            <div class="sdot sd-todo">4</div>
+          </div>
+          <div class="step-content">
+            <div class="st-name muted">페이백 신청</div>
+            <div class="st-sub">후기 완료 후 신청 가능</div>
+          </div>
         </div>
       </div>
-      <canvas id="status-chart" width="280" height="220"></canvas>
     </div>
-    <div class="card">
-      <div class="card-title">채널별 현황 (F열)</div>
-      <div id="channel-bars"><div style="color:var(--text3);font-size:13px;">데이터를 불러오세요</div></div>
+    <button class="btn btn-red" onclick="goTo('s-review')">후기 제출하러 가기 →</button>
+    <button class="btn btn-out" onclick="goTo('s-apply')">신청 현황 보기</button>
+  </div>
+</div>
+
+<!-- ③ 캠페인 선택 -->
+<div class="screen" id="s-campaign">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+      <div class="tb-title">캠페인 선택</div>
+      <div class="tb-sub">참여할 캠페인을 선택하세요</div>
     </div>
   </div>
-
-  <div class="card" style="margin-bottom:16px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div class="card-title" style="margin:0;">📅 업무 달력</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn btn-secondary btn-sm" onclick="changeMonth(-1)">◀</button>
-        <span id="cal-title" style="font-weight:600;font-size:14px;min-width:100px;text-align:center;"></span>
-        <button class="btn btn-secondary btn-sm" onclick="changeMonth(1)">▶</button>
+  <div class="body">
+    <div class="sec">진행 중인 캠페인</div>
+    <div class="camp-card sel" id="camp1" onclick="selectCamp('camp1')">
+      <div class="camp-img" style="background:linear-gradient(135deg,#FFD5D5,#FFAAAA);">
+        <div class="camp-img-icon"><div style="font-size:22px;">👗</div></div>
+        <div class="camp-check cc-sel" id="camp1-check">✓</div>
+        <span class="pill p-red" style="position:absolute;top:10px;right:10px;font-size:9px;">D-5</span>
+      </div>
+      <div class="camp-body">
+        <div class="camp-name">2025 봄 신상 체험단</div>
+        <div class="camp-desc">바람막이·데님팬츠·티셔츠 중 선택</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="pill p-blue">신청 마감 4/15 오후 3시</span>
+          <span class="pill p-green">재고 있음</span>
+        </div>
       </div>
     </div>
-    <div style="display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
-      <span style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#b5451b;margin-right:4px;"></span>마감기한(M)</span>
-      <span style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2d6a4f;margin-right:4px;"></span>완료일(N)</span>
-      <span style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#1a56a0;margin-right:4px;"></span>기안일(P)</span>
-      <span style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#92470a;margin-right:4px;"></span>결재예정일(Q)</span>
+    <div class="camp-card" id="camp2" onclick="selectCamp('camp2')">
+      <div class="camp-img" style="background:linear-gradient(135deg,#D5E8FF,#AACCFF);">
+        <div class="camp-img-icon"><div style="font-size:22px;">🩱</div></div>
+        <div class="camp-check cc-def" id="camp2-check"></div>
+        <span class="pill p-orange" style="position:absolute;top:10px;right:10px;font-size:9px;">D-12</span>
+      </div>
+      <div class="camp-body">
+        <div class="camp-name">여름 수영복 체험단</div>
+        <div class="camp-desc">래시가드·수영복 신상 체험</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="pill p-blue">신청 마감 4/22 오후 3시</span>
+          <span class="pill p-orange">마감 임박</span>
+        </div>
+      </div>
     </div>
-    <div id="calendar-grid"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">데이터 목록</div>
-    <div class="table-wrap">
-      <table><thead><tr><th>요청일(C)</th><th>채널(F)</th><th>제품명(E)</th><th>진행상황(D)</th><th>마감(M)</th><th>완료(N)</th><th>기안(P)</th><th>결재(Q)</th></tr></thead>
-      <tbody id="dashboard-body"><tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">불러오기를 눌러주세요</td></tr></tbody></table>
+    <div class="camp-summary card">
+      <div style="font-size:11px;font-weight:800;color:var(--rd);margin-bottom:5px;">선택된 캠페인</div>
+      <div style="font-size:14px;font-weight:800;color:var(--rd);" id="camp-name-display">2025 봄 신상 체험단</div>
+      <div style="font-size:11px;color:var(--rm);margin-top:3px;" id="camp-date-display">신청 마감: 4/15 오후 3시 · 점수 순 자동 배정</div>
     </div>
+    <button class="btn btn-red" onclick="goTo('s-apply')">이 캠페인 신청하기 →</button>
+    <button class="btn btn-out" onclick="goTo('s-product')">제품 먼저 보기</button>
   </div>
 </div>
 
-<!-- ===== 설문지 생성 ===== -->
-<div id="page-survey" class="page">
-  <div style="margin-bottom:28px;"><div class="page-title">📋 설문지 생성</div><div class="page-desc">제품 등록 후 구글 폼 내용을 자동으로 구성합니다</div></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-  <div>
-    <div class="card">
-      <div class="card-title">설문지 기본 정보</div>
-      <div class="form-row"><label>신청 마감일</label><input type="date" id="s-deadline" oninput="updateSurveyPreview()"></div>
-      <div class="form-row"><label>후기 제출 마감일</label><input type="date" id="s-review-deadline" oninput="updateSurveyPreview()"></div>
-      <div class="form-row"><label>설문지 제목</label><input type="text" id="s-title" placeholder="[마감일] 스피드 체험단 신청 설문지" oninput="updateSurveyPreview()"></div>
-      <div class="form-row"><label>안내 문구</label><textarea id="s-guide" rows="4" oninput="updateSurveyPreview()">안녕하세요! 체험단 신청 설문지입니다.
-아래 제품을 확인 후 신청해 주세요.
-선정 결과는 개별 문자로 안내드립니다.</textarea></div>
+<!-- ④ 제품 선택 -->
+<div class="screen" id="s-product">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-campaign')">← 이전</button></div>
+      <div class="tb-title">제품 선택</div>
+      <div class="tb-sub">최대 2개 · 1개 남음</div>
     </div>
-    <div class="card">
-      <div class="card-title">제품 추가</div>
-      <div class="form-row"><label>제품명</label><input type="text" id="p-name" placeholder="예: 오즈모 세럼 50ml"></div>
-      <div class="form-row"><label>제품 링크</label><input type="text" id="p-link" placeholder="https://..."></div>
-      <div class="form-row"><label>썸네일 이미지 URL</label><input type="text" id="p-img" placeholder="https://... (이미지 주소 복사)" oninput="previewThumb()">
-        <img id="thumb-preview" src="" alt="" style="width:60px;height:60px;border-radius:6px;object-fit:cover;margin-top:8px;display:none;"></div>
-      <button class="btn btn-secondary btn-full" onclick="addProduct()">+ 제품 추가</button>
-    </div>
-    <div class="card">
-      <div class="card-title">등록된 제품 <span id="product-count" style="font-weight:400;color:var(--text3)">0개</span></div>
-      <div id="product-list"><div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">제품을 추가해주세요</div></div>
-    </div>
-    <button class="btn btn-primary btn-full" style="font-size:15px;padding:14px;" onclick="generateForm()">🚀 구글 폼 자동 생성</button>
-    <div id="form-link-result" style="display:none;margin-top:12px;"></div>
   </div>
-  <div>
+  <div class="body">
+    <div style="background:var(--rl);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:12px;font-weight:700;color:var(--rd);">내 구매 가능 수량 · 최대 2개</div>
+      <span class="pill p-red">1개 남음</span>
+    </div>
+    <div class="sec">캠페인 제품 목록</div>
+    <div class="prod-card sel" id="prod1">
+      <div class="prod-img" style="background:linear-gradient(135deg,#FFD5D5,#FFAAAA);">
+        <div class="prod-img-box"></div>
+        <div class="prod-ch-tag">자사몰</div>
+        <span class="pill p-green prod-stk" style="font-size:9px;padding:2px 7px;">재고 충분</span>
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">봄 신상 바람막이 점퍼 (3~5세)</div>
+        <div class="prod-price">구매가 <strong>38,000원</strong> → 전액 환급</div>
+        <div class="prod-ch-row">
+          <span style="color:var(--red);font-size:11px;">●</span>
+          <span style="color:#999;font-size:11px;">구매처</span>
+          <span style="font-weight:800;color:var(--rd);font-size:11px;">ozkiz.com 자사몰</span>
+          <span style="margin-left:auto;font-size:13px;">🔒</span>
+        </div>
+        <div class="prod-footer">
+          <div style="font-size:11px;color:#888;">잔여 <span style="color:#222;font-weight:800;">47개</span></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="qty-wrap"><button class="qb" onclick="changeQty('q1',-1)">−</button><div class="qn" id="q1">1</div><button class="qb" onclick="changeQty('q1',1)">+</button></div>
+            <button class="sel-btn done" onclick="selectProd('prod1',this)">선택됨 ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" id="prod2">
+      <div class="prod-img" style="background:linear-gradient(135deg,#D5E8FF,#AACCFF);">
+        <div class="prod-img-box"></div>
+        <div class="prod-ch-tag" style="color:#1565C0;">네이버</div>
+        <span class="pill p-orange prod-stk" style="font-size:9px;padding:2px 7px;">마감 임박</span>
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">데님 와이드 팬츠 (5~7세)</div>
+        <div class="prod-price">구매가 <strong>29,000원</strong> → 전액 환급</div>
+        <div class="prod-ch-row">
+          <span style="color:var(--red);font-size:11px;">●</span>
+          <span style="color:#999;font-size:11px;">구매처</span>
+          <span style="font-weight:800;color:var(--rd);font-size:11px;">네이버 스마트스토어</span>
+          <span style="margin-left:auto;font-size:13px;">🔒</span>
+        </div>
+        <div class="prod-footer">
+          <div style="font-size:11px;color:#E65100;">잔여 <strong>3개</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="qty-wrap"><button class="qb" onclick="changeQty('q2',-1)">−</button><div class="qn" id="q2">1</div><button class="qb" onclick="changeQty('q2',1)">+</button></div>
+            <button class="sel-btn" onclick="selectProd('prod2',this)">선택</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prod-card" style="opacity:.5;">
+      <div class="prod-img" style="background:#F0F0F0;">
+        <div class="prod-img-box"></div>
+        <div class="prod-ch-tag" style="color:#777;">쿠팡</div>
+        <span class="pill p-gray prod-stk" style="font-size:9px;padding:2px 7px;">마감</span>
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">스트라이프 티셔츠 2종 세트</div>
+        <div class="prod-price">구매가 <strong>22,000원</strong> → 전액 환급</div>
+        <div class="prod-footer">
+          <div style="font-size:11px;color:#AAA;">잔여 0개</div>
+          <button class="sel-btn" disabled style="background:#EEE;color:#BBB;">마감</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="goTo('s-apply')">선택 완료 · 신청하기 →</button>
+  </div>
+</div>
+
+<!-- ⑤ 신청 윈도우 -->
+<div class="screen" id="s-apply">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+      <div class="tb-title">신청 현황</div>
+      <div class="tb-sub">방식 B — 점수 순 자동 배정</div>
+    </div>
+  </div>
+  <div class="body">
     <div class="card">
-      <div class="card-title">설문지 미리보기</div>
-      <div class="survey-preview">
-        <div style="font-size:16px;font-weight:700;margin-bottom:8px;" id="prev-title">설문지 제목</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;white-space:pre-line;" id="prev-guide">안내문구</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:4px;">신청마감일: <span id="prev-deadline">-</span></div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">후기제출 마감일: <span id="prev-rdeadline">-</span></div>
-        <hr style="border:none;border-top:1px solid var(--border);margin-bottom:16px;">
-        <div id="prev-products" style="margin-bottom:16px;"></div>
-        <div class="survey-field"><div class="survey-field-label">이름 <span style="color:red">*</span></div><div class="survey-field-input">답변 입력</div></div>
-        <div class="survey-field"><div class="survey-field-label">전화번호 <span style="color:red">*</span></div><div class="survey-field-input">010-0000-0000</div></div>
-        <div class="survey-field"><div class="survey-field-label">SNS URL <span style="color:red">*</span></div><div class="survey-field-input">https://...</div></div>
-        <div class="survey-field"><div class="survey-field-label">신청 제품 선택 <span style="color:red">*</span></div><div id="prev-product-choices" style="font-size:13px;color:var(--text3)">제품을 추가하면 선택지가 표시됩니다</div></div>
-        <div class="survey-field" style="display:flex;align-items:center;gap:8px;"><input type="checkbox"><label style="margin:0;font-size:13px;font-weight:400;cursor:pointer;">개인정보 수집 및 이용에 동의합니다 <span style="color:red">*</span></label></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <div style="width:9px;height:9px;border-radius:50%;background:#2E7D32;animation:pulse 1.5s infinite;flex-shrink:0;"></div>
+        <div style="font-size:13px;font-weight:800;">신청 접수 중</div>
+        <span class="pill p-green" style="margin-left:auto;">윈도우 오픈</span>
+      </div>
+      <div class="countdown-box">
+        <div class="cd-label">신청 마감까지</div>
+        <div class="cd-time" id="countdown">05:24:38</div>
+        <div class="cd-sub">마감 후 점수 순으로 자동 배정</div>
+      </div>
+      <div class="prog-wrap" style="margin-top:13px;"><div class="prog-fill" style="width:28%;"></div></div>
+      <div class="prog-labels"><span>오픈 후 1시간 경과</span><span>총 3시간</span></div>
+    </div>
+    <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
+      <div style="font-size:13px;color:#1B5E20;line-height:1.7;"><strong>마감 전 언제든 신청 가능해요!</strong><br>빨리 신청해도, 늦게 신청해도<br><strong>점수가 높은 순으로 배정</strong>돼요.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">내 우선순위 점수</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:9px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%;"></div></div>
+        <span style="font-size:22px;font-weight:900;color:#111;">100점</span>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <span class="pill p-blue">참여 0회</span>
+        <span class="pill p-green">리뷰 3종 +15</span>
+        <span class="pill p-green">마감준수 +5</span>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="goTo('s-applied')">신청하기 →</button>
+  </div>
+</div>
+
+<!-- ⑤-2 신청 완료 대기 -->
+<div class="screen" id="s-applied">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-apply')">← 이전</button></div>
+      <div class="tb-title">신청 완료</div>
+      <div class="tb-sub">배정 결과를 기다려주세요</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:#2E7D32;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;">✓</div>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#1B5E20;">신청 완료!</div>
+          <div style="font-size:12px;color:#2E7D32;margin-top:2px;">마감 후 결과를 알려드릴게요</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;color:#888;margin-bottom:6px;">배정 결과까지</div>
+      <div class="cd-time" style="font-size:28px;">04:21:05</div>
+      <div style="font-size:12px;color:#AAA;margin-top:4px;">마감 후 점수 순 자동 배정</div>
+    </div>
+    <div class="card">
+      <div class="card-title">내 신청 현황</div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F5F5F5;font-size:13px;"><span style="color:#888;">신청 시각</span><span style="font-weight:800;">오늘 오전 10:38</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F5F5F5;font-size:13px;"><span style="color:#888;">내 점수</span><span style="font-weight:800;color:var(--red);">100점</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;"><span style="color:#888;">현재 신청자</span><span style="font-weight:800;">15명</span></div>
+    </div>
+    <button class="btn btn-gray">신청 취소</button>
+  </div>
+</div>
+
+<!-- ⑥ 후기 제출 -->
+<div class="screen" id="s-review">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+      <div class="tb-title">후기 제출</div>
+      <div class="tb-sub">3가지 채널 모두 완료해주세요</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="card">
+      <div class="prog-wrap"><div class="prog-fill" style="width:33%;"></div></div>
+      <div class="prog-labels"><span>1/3 완료</span><span>마감 D-5</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">후기 채널별 현황</div>
+      <div class="review-row"><div class="review-icon"></div><div style="flex:1;font-size:13px;font-weight:600;">자사몰 (ozkiz.com) 후기</div><span class="pill p-green">완료</span></div>
+      <div class="review-row"><div class="review-icon"></div><div style="flex:1;font-size:13px;font-weight:600;">구매몰 후기</div><span class="pill p-red">필수</span></div>
+      <div class="review-row"><div class="review-icon"></div><div style="flex:1;font-size:13px;font-weight:600;">인스타그램</div><span class="pill p-gray">미제출</span></div>
+      <div class="review-row" style="border-bottom:none;"><div class="review-icon"></div><div style="flex:1;font-size:13px;font-weight:600;">블로그 포스팅</div><span class="pill p-gray">미제출</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">구매몰 후기 URL <span class="pill p-red" style="font-size:9px;">필수</span></div>
+      <input class="url-input" placeholder="https://...">
+      <div style="margin-top:11px;font-size:12px;font-weight:700;color:#888;margin-bottom:6px;">구매 영수증 <span class="pill p-red" style="font-size:9px;">필수</span></div>
+      <div class="upload-box">📷 사진을 탭해서 업로드</div>
+    </div>
+    <div class="card"><div class="card-title">인스타그램 URL</div><input class="url-input" placeholder="https://instagram.com/p/..."></div>
+    <div class="card"><div class="card-title">블로그 URL</div><input class="url-input" placeholder="https://blog.naver.com/..."></div>
+    <button class="btn btn-red" onclick="goTo('s-payback')">제출하기 →</button>
+  </div>
+</div>
+
+<!-- ⑦ 페이백 신청 -->
+<div class="screen" id="s-payback">
+  <div class="topbar">
+    <div class="tb-main">
+      <div class="tb-row"><button class="back-pill" onclick="goTo('s-review')">← 이전</button></div>
+      <div class="tb-title">페이백 신청</div>
+      <div class="tb-sub">후기 완료 후 환급 신청</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#2E7D32;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0;">✓</div>
+        <div style="font-size:14px;font-weight:800;color:#1B5E20;">후기 3종 모두 완료됐어요!</div>
+      </div>
+    </div>
+    <div class="amount-box">
+      <div class="amount-label">환급 예정 금액</div>
+      <div class="amount-num">38,000원</div>
+      <div class="amount-sub">구매 영수증 기준 전액 환급</div>
+    </div>
+    <div class="card">
+      <div class="card-title">계좌 정보</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div><div class="f-label">은행</div><input class="f-input-sm" placeholder="예: 카카오뱅크"></div>
+        <div><div class="f-label">계좌번호</div><input class="f-input-sm" placeholder="계좌번호 입력 (- 없이)"></div>
+        <div><div class="f-label">예금주</div><input class="f-input-sm" placeholder="예금주명 입력"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">구매 영수증 <span class="pill p-red" style="font-size:9px;">필수</span></div>
+      <div class="upload-box done">영수증 사진 첨부 완료 ✓</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid #F5F5F5;"><span style="color:#888;">구매 금액</span><span style="font-weight:800;">38,000원</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;"><span style="color:#888;">환급 금액</span><span style="font-weight:800;color:var(--red);">38,000원</span></div>
+    </div>
+    <button class="btn btn-red" onclick="goTo('s-mypage')">페이백 신청하기 →</button>
+    <div style="font-size:12px;color:#BBB;text-align:center;">관리자 검토 후 3~5 영업일 내 입금돼요</div>
+  </div>
+</div>
+
+<!-- ⑧ 마이페이지 -->
+<div class="screen" id="s-mypage">
+  <div class="my-hero">
+    <div class="my-av-row">
+      <div class="my-av" id="my-avatar">김서</div>
+      <div>
+        <div class="my-name" id="my-name">김서포 <span class="gold-badge">골드</span></div>
+        <div class="my-phone" id="my-phone">010-****-5678</div>
       </div>
     </div>
   </div>
-  </div>
-</div>
+  <div class="body">
 
-<!-- ===== 체험단 선정 ===== -->
-<div id="page-select" class="page">
-  <div style="margin-bottom:28px;"><div class="page-title">🎯 체험단 선정</div><div class="page-desc">설문 응답자 중 조건에 맞게 자동으로 선정합니다</div></div>
-  <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start;">
-  <div>
-    <div class="card">
-      <div class="card-title">응답 스프레드시트</div>
-      <div class="form-row"><label>설문 응답 시트 ID</label><input type="text" id="resp-sheet-id" placeholder="스프레드시트 ID"></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary btn-sm" onclick="openSheet()">📄 원본 보기</button>
-        <button class="btn btn-primary btn-sm" onclick="loadApplicants()">📥 불러오기</button>
+    <!-- 현황 보드 -->
+    <div class="sec">진행 현황 보드</div>
+    <div class="card" style="padding:14px 12px;">
+      <div class="board">
+        <div class="b-col">
+          <div class="b-dot bd-done">✓</div>
+          <div class="b-label done">신청</div>
+        </div>
+        <div class="b-conn done"></div>
+        <div class="b-col">
+          <div class="b-dot bd-done">✓</div>
+          <div class="b-label done">선발</div>
+        </div>
+        <div class="b-conn done"></div>
+        <div class="b-col">
+          <div class="b-dot bd-done">✓</div>
+          <div class="b-label done">구매</div>
+        </div>
+        <div class="b-conn done"></div>
+        <div class="b-col">
+          <div class="b-dot bd-cur" style="font-size:16px;">✍</div>
+          <div class="b-label cur">후기작성</div>
+        </div>
+        <div class="b-conn"></div>
+        <div class="b-col">
+          <div class="b-dot bd-todo" style="font-size:14px;">₩</div>
+          <div class="b-label">페이백</div>
+        </div>
+      </div>
+      <div class="board-now">
+        <div class="bn-dot"></div>
+        <div class="bn-txt">현재 — 후기 작성 중</div>
+        <span class="pill p-orange" style="font-size:9px;">D-5 마감</span>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">선정 조건</div>
-      <div class="form-row"><label>제품당 선정 인원</label><input type="number" id="sel-count" value="5" min="1"></div>
-      <div class="form-row"><label>이전 선정 제외 기간</label>
-        <select id="sel-period"><option value="1">1개월 이내 제외</option><option value="2" selected>2개월 이내 제외</option><option value="3">3개월 이내 제외</option><option value="6">6개월 이내 제외</option></select></div>
-      <div class="form-row"><label>선정 방식</label>
-        <select id="sel-method"><option value="random">무작위 추첨</option><option value="order">먼저 신청한 순서</option></select></div>
-      <button class="btn btn-primary btn-full" onclick="doSelect()">🎲 자동 선정</button>
-    </div>
-    <div class="card">
-      <div class="card-title">신청 현황</div>
-      <div class="stats-grid" style="grid-template-columns:1fr 1fr;">
-        <div class="stat-card"><div class="stat-label">전체</div><div class="stat-value" id="app-total">0</div></div>
-        <div class="stat-card red"><div class="stat-label">OMG제외</div><div class="stat-value" id="app-omg">0</div></div>
-        <div class="stat-card blue"><div class="stat-label">기간제외</div><div class="stat-value" id="app-period">0</div></div>
-        <div class="stat-card green"><div class="stat-label">선정가능</div><div class="stat-value" id="app-eligible">0</div></div>
+
+    <!-- 진행 중인 건 -->
+    <div class="sec">진행 중인 건</div>
+    <div class="active-card">
+      <div class="ac-head">
+        <div class="ac-head-name">2025 봄 신상 체험단</div>
+        <div class="ac-head-step">5단계 중 4단계</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-row"><span class="ac-label">제품</span><span class="ac-val">바람막이 점퍼 (38,000원)</span></div>
+        <div class="ac-divider"></div>
+        <div style="font-size:12px;font-weight:800;color:#111;">후기 제출 현황</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+            <span style="color:#888;">자사몰 후기</span><span class="pill p-green">완료</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+            <span style="color:#888;">구매몰 후기</span><span class="pill p-red">미제출</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+            <span style="color:#888;">SNS 후기</span><span class="pill p-gray">미제출</span>
+          </div>
+        </div>
+        <div style="background:#FFF3E0;border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:12px;color:#E65100;font-weight:800;">후기 마감일</div>
+          <div style="font-size:12px;font-weight:900;color:#E65100;">4/19 자정 · D-5</div>
+        </div>
+      </div>
+      <div class="ac-action">
+        <div class="ac-action-txt">구매몰 후기부터<br>제출해주세요</div>
+        <button class="btn-sm" onclick="goTo('s-review')">후기 제출 →</button>
       </div>
     </div>
-  </div>
-  <div>
-    <div class="card">
-      <div class="card-title">선정 결과</div>
-      <div class="copy-all-wrap">
-        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','이름')">이름복사</button>
-        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','전화번호')">전화번호복사</button>
-        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','SNS')">SNS복사</button>
-        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','제품')">제품복사</button>
-        <button class="btn btn-secondary btn-sm" onclick="copyCol('result-table','제품링크')">제품링크복사</button>
+
+    <!-- 대기 중인 건 -->
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#111;">여름 수영복 체험단</div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">신청 완료 · 배정 결과 대기 중</div>
       </div>
-      <div class="table-wrap"><table id="result-table">
-        <thead><tr><th>#</th><th>이름</th><th>전화번호</th><th>SNS</th><th>제품</th><th>제품링크</th><th>상태</th></tr></thead>
-        <tbody id="result-body"><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px;">자동 선정 버튼을 눌러주세요</td></tr></tbody>
-      </table></div>
+      <span class="pill p-orange">대기중</span>
     </div>
+
+    <!-- 전체 통계 -->
+    <div class="sec">전체 활동 현황</div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="sn">5</div><div class="sl">총 신청</div></div>
+      <div class="stat-box"><div class="sn" style="color:#2E7D32;">3</div><div class="sl">완료</div></div>
+      <div class="stat-box"><div class="sn" style="color:var(--red);">1</div><div class="sl">진행중</div></div>
+    </div>
+
+    <!-- 메뉴 -->
+    <div class="menu-card">
+      <div class="mi" onclick="goTo('s-review')">후기 제출 현황 <span class="mi-arr">›</span></div>
+      <div class="mi">페이백 내역 <span class="mi-arr">›</span></div>
+      <div class="mi">계좌 정보 관리 <span class="mi-arr">›</span></div>
+      <div class="mi" onclick="goTo('s-notif')">알림 설정 <span class="mi-arr">›</span></div>
+      <div class="mi" style="color:#AAA;" onclick="goTo('s-login')">로그아웃 <span class="mi-arr">›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑨ 알림 -->
+<div class="screen" id="s-notif">
+  <div class="topbar">
+    <div class="tb-main" style="padding-bottom:18px;">
+      <div class="tb-title">알림</div>
+    </div>
+  </div>
+  <div class="body" style="margin-top:0;">
     <div class="card">
-      <div class="card-title">전체 신청자 목록</div>
-      <div class="table-wrap"><table id="applicant-table">
-        <thead><tr><th>#</th><th>이름</th><th>전화번호</th><th>SNS</th><th>신청시간</th><th>상태</th></tr></thead>
-        <tbody id="applicant-body"><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">신청자를 불러오세요</td></tr></tbody>
-      </table></div>
-    </div>
-  </div>
-  </div>
-</div>
-
-<!-- ===== 알림톡 ===== -->
-<div id="page-kakao" class="page">
-  <div style="margin-bottom:28px;"><div class="page-title">💬 알림톡 발송</div></div>
-  <div class="card" style="text-align:center;padding:48px;">
-    <div style="font-size:48px;margin-bottom:16px;">⏳</div>
-    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">솔라피 검수 진행중</div>
-    <div style="color:var(--text2);">검수 완료 후 알림톡 발송 기능이 활성화됩니다.</div>
-    <div style="margin-top:24px;padding:16px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #f5d5a8;display:inline-block;">
-      <div style="font-size:12px;color:var(--amber);font-weight:600;">✉️ 검수 완료 알림을 받으면 알려주세요!</div>
+      <div class="notif-row"><div class="nd"></div><div><div class="nt">페이백 신청이 접수됐어요. 관리자 검토 후 3~5 영업일 내 입금돼요.</div><div class="ntime">방금 전</div></div></div>
+      <div class="notif-row"><div class="nd"></div><div><div class="nt">구매몰 후기 URL이 등록됐어요. 인스타·블로그도 제출해주세요!</div><div class="ntime">1시간 전</div></div></div>
+      <div class="notif-row"><div class="nd read"></div><div><div class="nt" style="color:#888;">후기 마감이 <strong style="color:#111;">D-5</strong>예요. 서둘러 제출해주세요.</div><div class="ntime">어제</div></div></div>
+      <div class="notif-row"><div class="nd read"></div><div><div class="nt" style="color:#888;">2025 봄 신상 체험단에 배정됐어요! 제품을 선택해주세요.</div><div class="ntime">3일 전</div></div></div>
+      <div class="notif-row" style="border-bottom:none;"><div class="nd read"></div><div><div class="nt" style="color:#888;">여름 수영복 체험단 신청이 완료됐어요. 배정 결과를 기다려주세요.</div><div class="ntime">5일 전</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- ===== 후기 확인 ===== -->
-<div id="page-review" class="page">
-  <div style="margin-bottom:28px;"><div class="page-title">✅ 후기 확인</div><div class="page-desc">체험단 후기 제출 현황을 확인하고 관리하세요</div></div>
-  <div class="card">
-    <div class="card-title">후기 응답 시트 연결</div>
-    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-      <div style="flex:1;" class="form-row"><label>후기 제출 응답 시트 ID</label><input type="text" id="review-sheet-id" placeholder="스프레드시트 ID"></div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;">
-        <button class="btn btn-secondary" onclick="openReviewSheet()">📄 원본 보기</button>
-        <button class="btn btn-primary" onclick="loadReviews()">🔄 불러오기</button>
-      </div>
-    </div>
-    <div class="notice" style="margin:0;"><strong>📋 후기 폼 항목:</strong> 이름 · 전화번호 · 후기URL · 자사몰후기이미지 · 몰후기이미지 · 구매내역이미지 · 페이백금액 · 계좌번호 · 예금주 · 은행</div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card green"><div class="stat-label">후기완료</div><div class="stat-value" id="rev-done">0</div></div>
-    <div class="stat-card blue"><div class="stat-label">진행중</div><div class="stat-value" id="rev-prog">0</div></div>
-    <div class="stat-card red"><div class="stat-label">마감미준수</div><div class="stat-value" id="rev-late">0</div></div>
-    <div class="stat-card"><div class="stat-label">전체</div><div class="stat-value" id="rev-total">0</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">후기 현황</div>
-    <div class="copy-all-wrap">
-      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','이름')">이름복사</button>
-      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','전화번호')">전화번호복사</button>
-      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','후기URL')">후기URL복사</button>
-      <button class="btn btn-secondary btn-sm" onclick="copyCol('review-table','계좌')">계좌복사</button>
-      <button class="btn btn-danger btn-sm" onclick="sendLateToOMG()">🚫 미준수자 OMG등록</button>
-    </div>
-    <div class="table-wrap"><table id="review-table">
-      <thead><tr><th>이름</th><th>전화번호</th><th>제품</th><th>후기URL</th><th>자사몰</th><th>몰후기</th><th>구매내역</th><th>페이백금액</th><th>계좌</th><th>예금주</th><th>은행</th><th>마감일</th><th>상태</th></tr></thead>
-      <tbody id="review-body"><tr><td colspan="13" style="text-align:center;color:var(--text3);padding:24px;">불러오기를 눌러주세요</td></tr></tbody>
-    </table></div>
-  </div>
+<!-- 하단 탭바 -->
+<div class="bottom-nav" id="bottom-nav">
+  <div class="nav-item on" id="nav-home" onclick="goNav('s-home','nav-home')"><div class="nav-dot"></div>홈</div>
+  <div class="nav-item" id="nav-camp" onclick="goNav('s-campaign','nav-camp')"><div class="nav-dot"></div>캠페인</div>
+  <div class="nav-item" id="nav-notif" onclick="goNav('s-notif','nav-notif')"><div class="nav-dot"></div>알림</div>
+  <div class="nav-item" id="nav-my" onclick="goNav('s-mypage','nav-my')"><div class="nav-dot"></div>마이</div>
 </div>
 
-<!-- ===== OMG ===== -->
-<div id="page-omg" class="page">
-  <div style="margin-bottom:28px;"><div class="page-title">🚫 OMG 리스트</div><div class="page-desc">미준수자를 등록하면 체험단 선정에서 자동 제외됩니다</div></div>
-  <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;">
-  <div class="card">
-    <div class="card-title">OMG 등록</div>
-    <div class="form-row"><label>이름</label><input type="text" id="omg-name" placeholder="홍길동"></div>
-    <div class="form-row"><label>전화번호</label><input type="tel" id="omg-phone" placeholder="010-0000-0000"></div>
-    <div class="form-row"><label>제외 사유</label>
-      <select id="omg-reason"><option>미응답</option><option>마감일 미준수</option><option>후기 삭제</option><option>허위 후기</option><option>연락 두절</option><option>기타</option></select></div>
-    <div class="form-row"><label>메모</label><input type="text" id="omg-memo" placeholder="추가 메모"></div>
-    <button class="btn btn-danger btn-full" onclick="addOMG()">🚫 OMG 등록</button>
-  </div>
-  <div class="card">
-    <div class="card-title">OMG 리스트 <span id="omg-count" style="font-weight:400;color:var(--text3)">0명</span></div>
-    <div style="margin-bottom:10px;"><input type="text" id="omg-search" placeholder="이름 또는 전화번호 검색..." oninput="renderOMG()" style="width:240px;"></div>
-    <div id="omg-list"><div style="color:var(--text3);font-size:13px;text-align:center;padding:24px;">등록된 OMG가 없습니다</div></div>
-  </div>
-  </div>
 </div>
-
-</main>
-</div>
-<div class="toast" id="toast"></div>
 
 <script>
-// ── 전역 상태 ──
-let products=[], omgList=JSON.parse(localStorage.getItem('omg')||'[]');
-let applicants=[], selectedResult=[], reviews=[];
-let dashData=[], calendarData={}, calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
-let chartMode='pie', chartInstance=null;
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw8TCHVMxySIkZDoJD1C49kZsGgho7lTm7Sd-WrGT-TrySyMAFPhfnau-9WgkV8RQtF/exec';
+const HIDE_NAV=['s-login'];
+const NAV_MAP={'s-home':'nav-home','s-campaign':'nav-camp','s-product':'nav-camp','s-apply':'nav-camp','s-applied':'nav-camp','s-review':'nav-home','s-payback':'nav-home','s-mypage':'nav-my','s-notif':'nav-notif'};
 
-// ── 네비게이션 ──
-function goPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  el.classList.add('active');
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  document.getElementById('bottom-nav').style.display=HIDE_NAV.includes(id)?'none':'flex';
+  const nav=NAV_MAP[id];
+  if(nav) setNav(nav);
+}
+function goNav(screen,nav){goTo(screen);setNav(nav);}
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  document.getElementById(id)?.classList.add('on');
 }
 
-// ── 토스트 ──
-function toast(msg,d=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
-
-// ── 날짜 ──
-function setDatePreset(days){const to=new Date(),from=new Date();from.setDate(from.getDate()-days);document.getElementById('date-to').value=to.toISOString().split('T')[0];document.getElementById('date-from').value=from.toISOString().split('T')[0];}
-function fmtDate(d){if(!d)return'-';const o=new Date(d);return isNaN(o)?d:o.toLocaleDateString('ko-KR');}
-
-// ── Apps Script ──
-function saveScriptUrl(){}
-async function callScript(params){
-  const url=SCRIPT_URL+'?'+new URLSearchParams(params).toString();
-  const res=await fetch(url);
-  return res.json();
+function sendSMS(){
+  const phone=document.getElementById('login-phone').value;
+  if(!phone){alert('전화번호를 입력해주세요.');return;}
+  alert('인증번호가 발송됐어요!\n(테스트 모드: 123456)');
 }
-async function postScript(body){
-  const res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  return res.json();
+function doLogin(){
+  const name=document.getElementById('login-name').value.trim();
+  const phone=document.getElementById('login-phone').value.trim();
+  if(!name||!phone){alert('이름과 전화번호를 입력해주세요.');return;}
+  document.getElementById('home-greeting').textContent='안녕하세요, '+name+'님 👋';
+  document.getElementById('my-name').innerHTML=name+' <span class="gold-badge">골드</span>';
+  document.getElementById('my-avatar').textContent=name.slice(0,2);
+  document.getElementById('my-phone').textContent=phone.replace(/(\d{3})-?(\d{4})-?(\d{4})/,'$1-****-$3');
+  goTo('s-home');setNav('nav-home');
 }
-
-// ── 대시보드 ──
-async function loadSheet(){
-  const from=document.getElementById('date-from').value;
-  const to=document.getElementById('date-to').value;
-  toast('⏳ 데이터 불러오는 중...');
-  try{
-    const p={action:'getDashboard',sheetName:'★자사몰 외 채널 후기'};
-    if(from)p.from=from;
-    if(to)p.to=to;
-    const json=await callScript(p);
-    if(json.success){renderDashboard(json.data,json.calendar||{});toast(`✅ ${json.data.length}건 불러왔습니다`);}
-    else toast('⚠️ '+json.error);
-  }catch(e){toast('❌ '+e.message);}
+function changeQty(id,delta){
+  const el=document.getElementById(id);
+  let v=parseInt(el.textContent)+delta;
+  if(v<1)v=1;if(v>2)v=2;
+  el.textContent=v;
 }
-
-function renderDashboard(data,calData){
-  dashData=data;calendarData=calData;
-  const total=data.length;
-  const done=data.filter(r=>r.status==='진행완료').length;
-  const prog=data.filter(r=>r.status==='진행중').length;
-  const rec=data.filter(r=>r.status==='섭외중').length;
-  const pend=data.filter(r=>r.status==='입금대기').length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-done').textContent=done;
-  document.getElementById('stat-progress').textContent=prog;
-  document.getElementById('stat-recruiting').textContent=rec;
-  document.getElementById('stat-pending').textContent=pend;
-  renderChart(done,prog,rec,pend);
-  renderChannelBars(data,total);
-  renderCalendar();
-  renderTable(data);
+function selectProd(prodId,btn){
+  document.querySelectorAll('.prod-card').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.sel-btn').forEach(b=>{b.textContent='선택';b.classList.remove('done');});
+  document.getElementById(prodId).classList.add('sel');
+  btn.textContent='선택됨 ✓';btn.classList.add('done');
 }
-
-function renderChart(done,prog,rec,pend){
-  const canvas=document.getElementById('status-chart');
-  if(chartInstance){chartInstance.destroy();chartInstance=null;}
-  const labels=['진행완료','진행중','섭외중','입금대기'];
-  const values=[done,prog,rec,pend];
-  const colors=['#2d6a4f','#1a56a0','#92470a','#b5451b'];
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(chartMode==='pie'){
-    const total=values.reduce((a,b)=>a+b,0);
-    if(!total)return;
-    const cx=canvas.width/2-40,cy=canvas.height/2,r=Math.min(cx,cy)-16;
-    let start=-Math.PI/2;
-    values.forEach((v,i)=>{
-      const angle=(v/total)*Math.PI*2;
-      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+angle);
-      ctx.fillStyle=colors[i];ctx.fill();start+=angle;
-    });
-    labels.forEach((l,i)=>{
-      const ly=24+i*40;
-      ctx.fillStyle=colors[i];ctx.fillRect(canvas.width-88,ly,12,12);
-      ctx.fillStyle='#333';ctx.font='11px sans-serif';
-      ctx.fillText(`${l} ${values[i]}`,canvas.width-72,ly+10);
-    });
-  }else{
-    const max=Math.max(...values,1),bw=36,gap=12,left=24,bottom=canvas.height-28,avail=bottom-16;
-    labels.forEach((l,i)=>{
-      const x=left+i*(bw+gap),bh=(values[i]/max)*avail;
-      ctx.fillStyle=colors[i];ctx.fillRect(x,bottom-bh,bw,bh);
-      ctx.fillStyle='#333';ctx.font='11px sans-serif';ctx.textAlign='center';
-      ctx.fillText(values[i],x+bw/2,bottom-bh-4);
-      ctx.fillStyle='#666';ctx.font='10px sans-serif';
-      ctx.fillText(l,x+bw/2,bottom+14);
-    });
-    ctx.textAlign='left';
-  }
-  chartInstance={destroy:()=>ctx.clearRect(0,0,canvas.width,canvas.height)};
+const campData={camp1:{name:'2025 봄 신상 체험단',date:'4/15 오후 3시'},camp2:{name:'여름 수영복 체험단',date:'4/22 오후 3시'}};
+function selectCamp(id){
+  ['camp1','camp2'].forEach(c=>{
+    const card=document.getElementById(c);
+    const check=document.getElementById(c+'-check');
+    if(c===id){
+      card.classList.add('sel');
+      check.className='camp-check cc-sel';check.textContent='✓';
+    }else{
+      card.classList.remove('sel');
+      check.className='camp-check cc-def';check.textContent='';
+    }
+  });
+  document.getElementById('camp-name-display').textContent=campData[id].name;
+  document.getElementById('camp-date-display').textContent='신청 마감: '+campData[id].date+' · 점수 순 자동 배정';
 }
-
-function switchChart(mode){
-  chartMode=mode;
-  document.getElementById('btn-pie').style.background=mode==='pie'?'var(--accent-light)':'';
-  document.getElementById('btn-pie').style.color=mode==='pie'?'var(--accent)':'';
-  document.getElementById('btn-bar').style.background=mode==='bar'?'var(--accent-light)':'';
-  document.getElementById('btn-bar').style.color=mode==='bar'?'var(--accent)':'';
-  const done=dashData.filter(r=>r.status==='진행완료').length;
-  const prog=dashData.filter(r=>r.status==='진행중').length;
-  const rec=dashData.filter(r=>r.status==='섭외중').length;
-  const pend=dashData.filter(r=>r.status==='입금대기').length;
-  renderChart(done,prog,rec,pend);
-}
-
-function renderChannelBars(data,total){
-  const chMap={};
-  data.forEach(r=>{if(r.channel)chMap[r.channel]=(chMap[r.channel]||0)+1;});
-  const el=document.getElementById('channel-bars');
-  const channels=Object.keys(chMap).sort((a,b)=>chMap[b]-chMap[a]);
-  if(!channels.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;">데이터 없음</div>';return;}
-  const maxVal=Math.max(...channels.map(c=>chMap[c]));
-  el.innerHTML=channels.map(ch=>{
-    const cnt=chMap[ch],pct=total?Math.round(cnt/total*100):0,barPct=maxVal?Math.round(cnt/maxVal*100):0;
-    return`<div style="margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
-        <span style="font-weight:600;">${ch}</span><span style="color:var(--text2)">${cnt}건 (${pct}%)</span>
-      </div>
-      <div class="progress-wrap"><div class="progress-bar" style="width:${barPct}%;background:var(--blue);"></div></div>
-    </div>`;
-  }).join('');
-}
-
-// ── 달력 ──
-function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-function renderCalendar(){
-  document.getElementById('cal-title').textContent=`${calYear}년 ${calMonth+1}월`;
-  const days=['일','월','화','수','목','금','토'];
-  const first=new Date(calYear,calMonth,1).getDay();
-  const last=new Date(calYear,calMonth+1,0).getDate();
-  const typeColors={deadline:'#b5451b',doneDate:'#2d6a4f',draftDate:'#1a56a0',approveDate:'#92470a'};
-  const typeLabels={deadline:'마감',doneDate:'완료',draftDate:'기안',approveDate:'결재'};
-  const today=new Date().toISOString().split('T')[0];
-  let html=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">`;
-  days.forEach(d=>{html+=`<div style="text-align:center;font-size:11px;font-weight:700;color:var(--text2);padding:6px 0;">${d}</div>`;});
-  for(let i=0;i<first;i++)html+=`<div></div>`;
-  for(let day=1;day<=last;day++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const cal=calendarData[ds];
-    const isToday=ds===today;
-    html+=`<div style="min-height:60px;border:0.5px solid var(--border);border-radius:6px;padding:4px;background:${isToday?'var(--accent-light)':'var(--surface)'};">
-      <div style="font-size:11px;font-weight:${isToday?700:400};color:${isToday?'var(--accent)':'var(--text)'};margin-bottom:2px;">${day}</div>`;
-    if(cal)Object.entries(typeColors).forEach(([type,color])=>{if(cal[type])html+=`<div style="font-size:9px;background:${color};color:#fff;border-radius:3px;padding:1px 3px;margin-bottom:1px;">${typeLabels[type]} ${cal[type]}</div>`;});
-    html+=`</div>`;
-  }
-  html+=`</div>`;
-  document.getElementById('calendar-grid').innerHTML=html;
-}
-
-function renderTable(data){
-  const sb={'진행완료':'badge-green','진행중':'badge-blue','섭외중':'badge-amber','입금대기':'badge-red'};
-  document.getElementById('dashboard-body').innerHTML=data.length
-    ?data.map(r=>`<tr><td>${r.date||'-'}</td><td><span class="badge badge-gray">${r.channel||'-'}</span></td><td>${r.product||'-'}</td><td><span class="badge ${sb[r.status]||'badge-gray'}">${r.status||'-'}</span></td><td style="font-size:12px;">${r.deadline||'-'}</td><td style="font-size:12px;">${r.doneDate||'-'}</td><td style="font-size:12px;">${r.draftDate||'-'}</td><td style="font-size:12px;">${r.approveDate||'-'}</td></tr>`).join('')
-    :'<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">데이터 없음</td></tr>';
-}
-
-// ── 설문지 ──
-function updateSurveyPreview(){
-  const dl=document.getElementById('s-deadline').value;
-  const rdl=document.getElementById('s-review-deadline').value;
-  const auto=dl?`[${dl.slice(5).replace('-','/')}] 스피드 체험단 신청 설문지`:'설문지 제목';
-  const ti=document.getElementById('s-title');
-  if(!ti.dataset.manual)ti.value=auto;
-  document.getElementById('prev-title').textContent=ti.value||auto;
-  document.getElementById('prev-guide').textContent=document.getElementById('s-guide').value;
-  document.getElementById('prev-deadline').textContent=dl?fmtDate(dl):'-';
-  document.getElementById('prev-rdeadline').textContent=rdl?fmtDate(rdl):'-';
-  renderProductChoices();
-}
-document.getElementById('s-title').addEventListener('input',function(){this.dataset.manual='1';});
-
-function previewThumb(){const url=document.getElementById('p-img').value,img=document.getElementById('thumb-preview');if(url){img.src=url;img.style.display='block';}else img.style.display='none';}
-
-function addProduct(){
-  const name=document.getElementById('p-name').value.trim();
-  const link=document.getElementById('p-link').value.trim();
-  const img=document.getElementById('p-img').value.trim();
-  if(!name){toast('제품명을 입력해주세요');return;}
-  products.push({name,link,img,id:Date.now()});
-  document.getElementById('p-name').value='';
-  document.getElementById('p-link').value='';
-  document.getElementById('p-img').value='';
-  document.getElementById('thumb-preview').style.display='none';
-  renderProducts();updateSurveyPreview();toast('✅ 제품이 추가되었습니다');
-}
-
-function removeProduct(id){products=products.filter(p=>p.id!==id);renderProducts();updateSurveyPreview();}
-
-function renderProducts(){
-  document.getElementById('product-count').textContent=products.length+'개';
-  document.getElementById('product-list').innerHTML=products.length
-    ?products.map(p=>`<div class="product-item">${p.img?`<img class="product-thumb" src="${p.img}" alt="">`:
-      `<div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>`}
-      <div class="product-info"><div class="product-name">${p.name}</div><div class="product-link">${p.link||'링크 없음'}</div></div>
-      <span class="product-remove" onclick="removeProduct(${p.id})">×</span></div>`).join('')
-    :'<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">제품을 추가해주세요</div>';
-}
-
-function renderProductChoices(){
-  const el=document.getElementById('prev-product-choices');
-  const pp=document.getElementById('prev-products');
-  if(!products.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;">제품을 추가하면 선택지가 표시됩니다</div>';pp.innerHTML='';return;}
-  el.innerHTML=products.map(p=>`<div style="padding:4px 0;font-size:13px;">◯ ${p.name}</div>`).join('');
-  pp.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;">신청 가능 제품</div>`+
-    products.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
-      ${p.img?`<img src="${p.img}" style="width:44px;height:44px;border-radius:6px;object-fit:cover;">`:`<div style="width:44px;height:44px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;">📦</div>`}
-      <div><div style="font-size:13px;font-weight:600;">${p.name}</div>${p.link?`<a href="${p.link}" target="_blank" style="font-size:11px;color:var(--blue);">링크 보기 →</a>`:''}</div></div>`).join('');
-}
-
-function generateForm(){
-  if(!products.length){toast('제품을 먼저 추가해주세요');return;}
-  const title=document.getElementById('s-title').value||'스피드 체험단 신청 설문지';
-  const guide=document.getElementById('s-guide').value;
-  const dl=document.getElementById('s-deadline').value;
-  const rdl=document.getElementById('s-review-deadline').value;
-  const content=`제목: ${title}\n\n안내문구:\n${guide}\n신청마감일: ${dl||'-'}\n후기제출 마감일: ${rdl||'-'}\n\n[수집 항목]\n1. 이름 (단답형, 필수)\n2. 전화번호 010-0000-0000 (단답형, 필수)\n3. SNS URL (단답형, 필수)\n4. 신청 제품 선택 (객관식, 필수)\n${products.map((p,i)=>`   ${i+1}. ${p.name}${p.link?' | '+p.link:''}`).join('\n')}\n5. 개인정보 수집 및 이용 동의 (체크박스, 필수)`;
-  navigator.clipboard.writeText(content).catch(()=>{});
-  window.open('https://docs.google.com/forms/create','_blank');
-  const res=document.getElementById('form-link-result');
-  res.style.display='block';
-  res.className='card';
-  res.innerHTML=`<div class="card-title">✅ 설문지 내용 복사 완료</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">구글 폼이 새 탭에서 열렸어요. 아래 내용을 참고해서 폼을 만들어 주세요.</div>
-    <pre style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;font-size:11px;font-family:monospace;white-space:pre-wrap;color:var(--text);border:1px solid var(--border);">${content}</pre>
-    <div style="margin-top:8px;font-size:12px;color:var(--text3);">💡 클립보드에도 복사되었어요!</div>`;
-  toast('📋 내용 복사 + 구글 폼 새창 열림!',3000);
-}
-
-// ── 체험단 선정 ──
-const sampleApplicants=[
-  {name:'김민지',phone:'010-1234-5678',sns:'https://instagram.com/minji',product:'오즈모 세럼',time:'2025-11-01 09:12'},
-  {name:'이수진',phone:'010-2345-6789',sns:'https://blog.naver.com/sujin',product:'오즈모 크림',time:'2025-11-01 09:35'},
-  {name:'박지현',phone:'010-3456-7890',sns:'https://instagram.com/jihyun',product:'오즈모 세럼',time:'2025-11-01 10:02'},
-];
-
-async function loadApplicants(){
-  const sid=document.getElementById('resp-sheet-id').value.trim();
-  if(!SCRIPT_URL){applicants=[...sampleApplicants];renderApplicants();updateSelStats();toast('ℹ️ 샘플 데이터');return;}
-  toast('⏳ 신청자 불러오는 중...');
-  try{const json=await callScript({action:'getApplicants',sheetId:sid});
-    if(json.success){applicants=json.data;renderApplicants();updateSelStats();toast(`✅ ${applicants.length}명`);}
-    else toast('⚠️ '+json.error);
-  }catch(e){toast('❌ '+e.message);}
-}
-
-function openSheet(){const sid=document.getElementById('resp-sheet-id').value.trim();if(sid)window.open(`https://docs.google.com/spreadsheets/d/${sid}`,'_blank');else toast('시트 ID를 입력해주세요');}
-function openReviewSheet(){const sid=document.getElementById('review-sheet-id').value.trim();if(sid)window.open(`https://docs.google.com/spreadsheets/d/${sid}`,'_blank');else toast('시트 ID를 입력해주세요');}
-
-function updateSelStats(){
-  const omgPhones=omgList.map(o=>o.phone);
-  document.getElementById('app-total').textContent=applicants.length;
-  document.getElementById('app-omg').textContent=applicants.filter(a=>omgPhones.includes(a.phone)).length;
-  document.getElementById('app-period').textContent=0;
-  document.getElementById('app-eligible').textContent=applicants.filter(a=>!omgPhones.includes(a.phone)).length;
-}
-
-function renderApplicants(){
-  const omgPhones=omgList.map(o=>o.phone);
-  document.getElementById('applicant-body').innerHTML=applicants.map((a,i)=>{
-    const isOMG=omgPhones.includes(a.phone);
-    return`<tr style="${isOMG?'background:var(--accent2-light);':''}"><td>${i+1}</td><td>${a.name}</td><td>${a.phone}</td>
-      <td><a href="${a.sns}" target="_blank" style="color:var(--blue);font-size:12px;">링크</a></td>
-      <td style="font-size:12px;color:var(--text3);">${a.time}</td>
-      <td>${isOMG?'<span class="badge badge-red">OMG 제외</span>':'<span class="badge badge-green">선정 가능</span>'}</td></tr>`;
-  }).join('');
-}
-
-function doSelect(){
-  if(!applicants.length){toast('신청자를 먼저 불러오세요');return;}
-  const omgPhones=omgList.map(o=>o.phone);
-  const count=parseInt(document.getElementById('sel-count').value)||5;
-  const method=document.getElementById('sel-method').value;
-  let eligible=applicants.filter(a=>!omgPhones.includes(a.phone));
-  if(method==='random')eligible=eligible.sort(()=>Math.random()-.5);
-  selectedResult=eligible.slice(0,count);
-  const productLinks={};products.forEach(p=>{productLinks[p.name]=p.link;});
-  document.getElementById('result-body').innerHTML=selectedResult.map((a,i)=>`
-    <tr><td>${i+1}</td><td>${a.name}</td><td>${a.phone}</td>
-    <td><a href="${a.sns}" target="_blank" style="color:var(--blue);font-size:12px;">링크</a></td>
-    <td>${a.product||'-'}</td>
-    <td style="font-size:12px;">${productLinks[a.product]?`<a href="${productLinks[a.product]}" target="_blank" style="color:var(--blue);">링크</a>`:'-'}</td>
-    <td><span class="badge badge-green">선정</span></td></tr>`).join('');
-  toast(`🎉 ${selectedResult.length}명 선정되었습니다`);
-}
-
-function copyCol(tableId,colName){
-  const table=document.getElementById(tableId);
-  const headers=[...table.querySelectorAll('th')].map(th=>th.textContent.trim());
-  const colIdx=headers.findIndex(h=>h===colName||h.includes(colName));
-  if(colIdx<0){toast('열을 찾을 수 없습니다');return;}
-  const vals=[...table.querySelectorAll('tbody tr')].map(r=>{const c=r.querySelectorAll('td')[colIdx];return c?c.textContent.trim():'';})
-    .filter(v=>v&&!['자동 선정 버튼을 눌러주세요','불러오기를 눌러주세요','신청자를 불러오세요'].includes(v));
-  navigator.clipboard.writeText(vals.join('\n')).then(()=>toast(`📋 ${colName} ${vals.length}개 복사됨`));
-}
-
-// ── 후기 ──
-const sampleReviews=[
-  {name:'김민지',phone:'010-1234-5678',product:'오즈모 세럼',url:'https://instagram.com/p/abc',mymall:'✅',mall:'✅',receipt:'✅',amount:'28900',account:'123-456-7890',holder:'김민지',bank:'카카오뱅크',deadline:'2025-11-20',status:'완료'},
-  {name:'이수진',phone:'010-2345-6789',product:'오즈모 크림',url:'-',mymall:'❌',mall:'❌',receipt:'❌',amount:'-',account:'-',holder:'-',bank:'-',deadline:'2025-11-20',status:'미완료'},
-];
-
-async function loadReviews(){
-  const sid=document.getElementById('review-sheet-id').value.trim();
-  if(!SCRIPT_URL){reviews=[...sampleReviews];renderReviews();toast('ℹ️ 샘플 데이터');return;}
-  toast('⏳ 후기 불러오는 중...');
-  try{const json=await callScript({action:'getReviews',sheetId:sid});
-    if(json.success){reviews=json.data;renderReviews();toast(`✅ ${reviews.length}건`);}
-    else toast('⚠️ '+json.error);
-  }catch(e){toast('❌ '+e.message);}
-}
-
-function renderReviews(){
-  const done=reviews.filter(r=>r.status==='완료').length;
-  const late=reviews.filter(r=>r.status==='미완료').length;
-  document.getElementById('rev-done').textContent=done;
-  document.getElementById('rev-prog').textContent=reviews.length-done-late;
-  document.getElementById('rev-late').textContent=late;
-  document.getElementById('rev-total').textContent=reviews.length;
-  document.getElementById('review-body').innerHTML=reviews.map(r=>`
-    <tr style="${r.status==='미완료'?'background:var(--accent2-light);':''}">
-      <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td>
-      <td><a href="${r.url!=='-'?r.url:'#'}" target="_blank" style="color:var(--blue);font-size:12px;">${r.url!=='-'?'보기':'-'}</a></td>
-      <td style="text-align:center">${r.mymall}</td><td style="text-align:center">${r.mall}</td><td style="text-align:center">${r.receipt}</td>
-      <td>${r.amount!=='-'?Number(r.amount).toLocaleString()+'원':'-'}</td>
-      <td>${r.account}</td><td>${r.holder}</td><td>${r.bank}</td>
-      <td style="font-size:12px;">${r.deadline}</td>
-      <td><span class="badge ${r.status==='완료'?'badge-green':'badge-red'}">${r.status}</span></td></tr>`).join('');
-}
-
-function sendLateToOMG(){
-  const late=reviews.filter(r=>r.status==='미완료');
-  if(!late.length){toast('미준수자가 없습니다');return;}
-  late.forEach(r=>{if(!omgList.find(o=>o.phone===r.phone))omgList.push({name:r.name,phone:r.phone,reason:'마감일 미준수',memo:'',id:Date.now()+Math.random()});});
-  saveOMG();toast(`🚫 ${late.length}명 OMG 등록`);
-}
-
-// ── OMG ──
-function saveOMG(){localStorage.setItem('omg',JSON.stringify(omgList));renderOMG();}
-function addOMG(){
-  const name=document.getElementById('omg-name').value.trim();
-  const phone=document.getElementById('omg-phone').value.trim();
-  const reason=document.getElementById('omg-reason').value;
-  const memo=document.getElementById('omg-memo').value.trim();
-  if(!name||!phone){toast('이름과 전화번호를 입력해주세요');return;}
-  if(omgList.find(o=>o.phone===phone)){toast('이미 등록된 번호입니다');return;}
-  omgList.push({name,phone,reason,memo,id:Date.now()});
-  saveOMG();
-  document.getElementById('omg-name').value='';
-  document.getElementById('omg-phone').value='';
-  document.getElementById('omg-memo').value='';
-  toast('🚫 OMG 리스트에 등록되었습니다');
-}
-function removeOMG(id){omgList=omgList.filter(o=>o.id!==id);saveOMG();toast('✅ 제거되었습니다');}
-function renderOMG(){
-  const q=document.getElementById('omg-search').value.toLowerCase();
-  const filtered=omgList.filter(o=>o.name.includes(q)||o.phone.includes(q));
-  document.getElementById('omg-count').textContent=omgList.length+'명';
-  document.getElementById('omg-list').innerHTML=filtered.length
-    ?filtered.map(o=>`<div class="omg-item"><span class="omg-name">${o.name}</span><span class="omg-phone">${o.phone}</span>
-      <span class="badge badge-red">${o.reason}</span>${o.memo?`<span style="font-size:11px;color:var(--text3);">${o.memo}</span>`:''}
-      <button class="btn btn-secondary btn-sm" style="margin-left:auto;" onclick="removeOMG(${o.id})">제거</button></div>`).join('')
-    :`<div style="color:var(--text3);font-size:13px;text-align:center;padding:24px;">${q?'검색 결과 없음':'등록된 OMG가 없습니다'}</div>`;
-}
-
-// ── 초기화 ──
-renderOMG();
-updateSurveyPreview();
-setDatePreset(30);
-renderCalendar();
-loadSheet();
+let secs=19478;
+setInterval(()=>{
+  secs=Math.max(0,secs-1);
+  const h=String(Math.floor(secs/3600)).padStart(2,'0');
+  const m=String(Math.floor((secs%3600)/60)).padStart(2,'0');
+  const s=String(secs%60).padStart(2,'0');
+  document.getElementById('countdown').textContent=h+':'+m+':'+s;
+},1000);
+setNav('nav-home');
 </script>
 </body>
 </html>
