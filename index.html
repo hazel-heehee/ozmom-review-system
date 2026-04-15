@@ -6,43 +6,106 @@
 <title>OZKIZ 서포터즈</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
-:root{--red:#E24B4A;--red2:#C73938;--rl:#FFF0F0;--rd:#7A1F1F;--rm:#C03030;}
+:root{--red:#E24B4A;--rl:#FFF0F0;--rd:#7A1F1F;--rm:#C03030;}
 body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
-.app{width:100%;max-width:420px;min-height:100vh;background:#F7F7F8;display:flex;flex-direction:column;position:relative;}
+.app{width:100%;max-width:420px;min-height:100vh;background:#F7F7F8;display:flex;flex-direction:column;}
 @media(min-width:480px){body{align-items:center;padding:20px;}.app{min-height:auto;border-radius:28px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.18);}}
-.screen{display:none;flex-direction:column;flex:1;min-height:100vh;padding-bottom:72px;}
+
+/* 화면 전환 */
+.screen{display:none;flex-direction:column;flex:1;padding-bottom:130px;}
 .screen.active{display:flex;}
+
+/* 상단바 */
 .topbar{background:var(--red);color:#fff;flex-shrink:0;}
-.tb-main{padding:14px 16px 40px;}
+.tb-main{padding:14px 16px 20px;}
 .tb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .back-pill{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;color:#fff;cursor:pointer;border:none;}
 .tb-greeting{font-size:12px;opacity:.82;margin-bottom:3px;}
-.tb-title{font-size:19px;font-weight:800;letter-spacing:.01em;}
+.tb-title{font-size:19px;font-weight:800;}
 .tb-sub{font-size:12px;opacity:.82;margin-top:2px;}
-.body{margin-top:-22px;padding:0 14px 14px;display:flex;flex-direction:column;gap:11px;}
+
+/* 바디 */
+.body{padding:12px 14px 0;display:flex;flex-direction:column;gap:11px;}
+
+/* 카드 */
 .card{background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 2px 14px rgba(0,0,0,.07);}
 .card-title{font-size:13px;font-weight:800;color:#111;margin-bottom:10px;}
 .sec{font-size:11px;font-weight:800;color:#999;letter-spacing:.04em;}
+
+/* 배지 */
 .pill{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;display:inline-block;white-space:nowrap;}
 .p-red{background:#FFEBEB;color:#C03030;}
 .p-green{background:#E8F5E9;color:#2E7D32;}
 .p-blue{background:#E3F2FD;color:#1565C0;}
 .p-orange{background:#FFF3E0;color:#E65100;}
 .p-gray{background:#F5F5F5;color:#777;}
-.p-purple{background:#EDE7F6;color:#4527A0;}
-.btn{width:100%;padding:14px;border-radius:14px;font-size:14px;font-weight:800;border:none;cursor:pointer;text-align:center;letter-spacing:.01em;}
+
+/* 버튼 */
+.btn{width:100%;padding:14px;border-radius:14px;font-size:14px;font-weight:800;border:none;cursor:pointer;text-align:center;}
 .btn-red{background:var(--red);color:#fff;}
 .btn-out{background:#fff;border:2px solid var(--red);color:var(--red);}
 .btn-gray{background:#F0F0F0;color:#888;}
-.btn-sm{background:var(--red);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
-.btn-sm-out{background:#fff;border:1.5px solid #E0E0E0;color:#666;border-radius:10px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-sm{background:var(--red);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;}
 
-/* 하단 탭바 */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;background:#fff;border-top:1px solid #EEEEEE;padding:8px 0 14px;z-index:100;}
+/* ===== 하단 탭바 — 항상 고정, 항상 최상단 ===== */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;background:#fff;border-top:1px solid #EEE;padding:8px 0 16px;z-index:999;}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#CCC;cursor:pointer;}
 .nav-item.on{color:var(--red);}
 .nav-dot{width:22px;height:22px;border-radius:7px;background:currentColor;opacity:.18;}
 .nav-item.on .nav-dot{opacity:1;}
+
+/* ===== 안내 배너 ===== */
+.info-banner{background:var(--rl);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.ib-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 2s infinite;}
+.ib-text{flex:1;font-size:12px;color:var(--rd);line-height:1.5;font-weight:600;}
+.ib-btn{background:var(--red);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
+
+/* ===== 스피드 체험단 팝업 ===== */
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:1000;align-items:flex-end;justify-content:center;}
+.overlay.show{display:flex;}
+.popup{background:#fff;width:100%;max-width:420px;border-radius:24px 24px 0 0;max-height:88vh;overflow-y:auto;padding:0 0 32px;}
+.popup-handle{width:36px;height:4px;background:#E0E0E0;border-radius:2px;margin:12px auto 0;}
+.popup-header{padding:16px 20px 12px;border-bottom:1px solid #F5F5F5;display:flex;align-items:center;justify-content:space-between;}
+.popup-title{font-size:17px;font-weight:900;color:#111;}
+.popup-close{width:28px;height:28px;border-radius:50%;background:#F5F5F5;border:none;cursor:pointer;font-size:15px;color:#888;}
+.popup-body{padding:16px 20px;display:flex;flex-direction:column;gap:16px;}
+.ps-title{font-size:13px;font-weight:800;color:#111;display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.step-list{display:flex;flex-direction:column;gap:8px;}
+.step-item{display:flex;gap:10px;align-items:flex-start;}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-txt{font-size:13px;color:#333;line-height:1.6;flex:1;}
+.step-txt strong{color:#111;font-weight:700;}
+.warn-box{background:#FFF8E1;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;}
+.warn-row{display:flex;gap:8px;font-size:12px;color:#555;line-height:1.6;}
+.guide-table{border-radius:12px;overflow:hidden;border:1px solid #EEE;}
+.gt-header{background:#F7F7F8;display:grid;grid-template-columns:1fr 1.4fr 0.8fr;padding:8px 12px;gap:6px;}
+.gt-h{font-size:10px;font-weight:800;color:#888;}
+.gt-row{display:grid;grid-template-columns:1fr 1.4fr 0.8fr;padding:8px 12px;gap:6px;border-top:1px solid #F5F5F5;}
+.gt-c{font-size:11px;color:#333;line-height:1.4;}
+.gt-c strong{font-weight:800;color:#111;}
+.sns-box{background:#F7F7F8;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;}
+.sns-row{display:flex;gap:8px;font-size:12px;color:#444;line-height:1.6;}
+.sns-dot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px;}
+.contact-box{background:var(--rl);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+.form-link{background:var(--red);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;}
+
+/* ===== 신청 완료 팝업 ===== */
+.confirm-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center;}
+.confirm-overlay.show{display:flex;}
+.confirm-popup{background:#fff;width:100%;max-width:420px;border-radius:24px 24px 0 0;padding:0 0 28px;}
+.cp-handle{width:32px;height:4px;background:#E0E0E0;border-radius:2px;margin:12px auto 0;}
+.cp-header{padding:18px 16px 12px;text-align:center;border-bottom:1px solid #F5F5F5;}
+.cp-icon{font-size:40px;margin-bottom:8px;}
+.cp-title{font-size:17px;font-weight:900;color:#111;margin-bottom:4px;}
+.cp-sub{font-size:13px;color:#888;line-height:1.6;}
+.cp-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.cp-info{background:#F7F7F8;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:0;}
+.cp-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #EEE;}
+.cp-row:last-child{border-bottom:none;}
+.cp-icon-sm{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.cp-txt{font-size:12px;color:#333;line-height:1.5;flex:1;}
+.cp-txt strong{color:#111;font-weight:800;}
+.cp-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:800;cursor:pointer;}
 
 /* ===== 로그인 ===== */
 .login-hero{background:var(--red);padding:52px 24px 40px;display:flex;flex-direction:column;align-items:center;gap:8px;}
@@ -52,80 +115,79 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 .login-badge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:11px;color:rgba(255,255,255,.92);margin-top:4px;}
 .login-form{flex:1;background:#fff;border-radius:28px 28px 0 0;margin-top:-16px;padding:22px 18px;display:flex;flex-direction:column;gap:13px;}
 .f-label{font-size:11px;font-weight:800;color:#888;margin-bottom:4px;}
-.f-input{width:100%;background:#F7F7F8;border:1.5px solid #EEEEEE;border-radius:12px;padding:12px 14px;font-size:14px;color:#222;outline:none;transition:border-color .2s;}
+.f-input{width:100%;background:#F7F7F8;border:1.5px solid #EEE;border-radius:12px;padding:12px 14px;font-size:14px;color:#222;outline:none;transition:border-color .2s;}
 .f-input:focus{border-color:var(--red);background:#fff;}
 .f-row{display:flex;gap:8px;}
-.f-send{background:var(--red);color:#fff;border:none;border-radius:12px;padding:0 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.f-send{background:var(--red);color:#fff;border:none;border-radius:12px;padding:0 16px;font-size:13px;font-weight:800;cursor:pointer;}
 .login-hint{font-size:12px;color:#BBB;text-align:center;line-height:1.7;}
 
 /* ===== 캠페인 홈 ===== */
-.quota-bar{background:#fff;border-radius:16px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.06);}
 .camp-hero{background:var(--red);border-radius:18px;padding:16px 16px 14px;color:#fff;position:relative;overflow:hidden;cursor:pointer;}
 .ch-deco{position:absolute;right:-10px;top:-10px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08);}
 .ch-deco2{position:absolute;right:14px;bottom:-22px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.06);}
 .ch-tag{background:rgba(255,255,255,.2);border-radius:8px;padding:3px 9px;font-size:10px;color:#fff;display:inline-block;margin-bottom:7px;}
 .ch-name{font-size:15px;font-weight:800;margin-bottom:3px;}
 .ch-sub{font-size:11px;opacity:.82;margin-bottom:10px;}
-.ch-pills{display:flex;gap:6px;}
+.ch-pills{display:flex;gap:6px;flex-wrap:wrap;}
 .ch-pill{background:rgba(255,255,255,.18);border-radius:8px;padding:3px 9px;font-size:10px;color:#fff;}
 
-/* 진행 스텝 — 4단계 */
+/* 홈 진행 스텝 */
 .step-track{display:flex;flex-direction:column;gap:0;}
 .step-row{display:flex;align-items:flex-start;gap:10px;}
 .step-col{display:flex;flex-direction:column;align-items:center;}
 .sdot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
 .sd-done{background:#E8F5E9;color:#2E7D32;}
 .sd-cur{background:var(--red);color:#fff;box-shadow:0 0 0 3px rgba(226,75,74,.2);}
-.sd-todo{background:#F0F0F0;color:#CCCCCC;}
-.step-line{width:2px;height:14px;background:#EEEEEE;margin:2px 0;}
+.sd-todo{background:#F0F0F0;color:#CCC;}
+.step-line{width:2px;height:14px;background:#EEE;margin:2px 0;}
 .step-line.done{background:#C8E6C9;}
 .step-content{padding-top:3px;flex:1;}
 .st-name{font-size:13px;font-weight:800;color:#111;}
 .st-name.cur{color:var(--red);}
-.st-name.muted{color:#BBBBBB;}
+.st-name.muted{color:#CCC;}
 .st-sub{font-size:11px;color:#AAA;margin-top:2px;}
 .st-sub.cur{color:rgba(226,75,74,.8);}
 
-/* ===== 캠페인 선택 ===== */
-.camp-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);border:2px solid transparent;cursor:pointer;transition:border-color .2s;}
-.camp-card.sel{border-color:var(--red);}
-.camp-img{height:88px;display:flex;align-items:center;justify-content:center;position:relative;}
-.camp-img-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;}
-.camp-check{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
-.cc-sel{background:var(--red);color:#fff;}
-.cc-def{background:rgba(255,255,255,.8);border:2px solid #DDD;color:transparent;}
-.camp-body{padding:11px 14px;}
-.camp-name{font-size:14px;font-weight:800;color:#111;margin-bottom:3px;}
-.camp-desc{font-size:12px;color:#888;margin-bottom:8px;}
-.camp-summary{background:var(--rl);border-radius:12px;padding:10px 14px;border:1px solid rgba(226,75,74,.2);}
-
 /* ===== 제품 선택 ===== */
-.prod-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.07);border:2px solid transparent;cursor:pointer;}
-.prod-card.sel{border-color:var(--red);}
-.prod-img{height:84px;display:flex;align-items:center;justify-content:center;position:relative;}
-.prod-img-box{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.5);}
-.prod-stk{position:absolute;top:8px;right:9px;}
+.camp-info-card{background:#fff;margin:10px 14px 0;border-radius:16px;padding:12px 16px;box-shadow:0 2px 12px rgba(0,0,0,.07);}
+.ci-name{font-size:14px;font-weight:900;color:#111;margin-bottom:8px;}
+.ci-meta{display:flex;flex-direction:column;gap:5px;}
+.ci-row{display:flex;align-items:center;gap:8px;font-size:12px;}
+.ci-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ci-label{color:#888;min-width:46px;}
+.ci-val{font-weight:700;}
+.ci-val.red{color:var(--red);}
+.ci-val.blue{color:#1565C0;}
+.prod-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);border:2px solid #EEE;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.prod-card.sel{border-color:var(--red);box-shadow:0 0 0 4px rgba(226,75,74,.1);background:#FFFAFA;}
+.prod-card.disabled{opacity:.4;cursor:default;}
+.prod-img{height:88px;display:flex;align-items:center;justify-content:center;position:relative;}
+.prod-img-box{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.55);}
 .prod-ch-tag{position:absolute;top:8px;left:9px;background:rgba(255,255,255,.92);border-radius:8px;padding:2px 8px;font-size:10px;font-weight:800;color:var(--rd);}
+.check-box{position:absolute;top:9px;right:9px;width:24px;height:24px;border-radius:50%;border:2px solid #DDD;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.prod-card.sel .check-box{border-color:var(--red);background:var(--red);}
+.check-icon{font-size:13px;font-weight:800;color:transparent;transition:color .15s;}
+.prod-card.sel .check-icon{color:#fff;}
 .prod-body{padding:10px 13px;}
 .prod-name{font-size:13px;font-weight:800;color:#111;margin-bottom:3px;}
+.prod-card.sel .prod-name{color:var(--red);}
 .prod-price{font-size:12px;color:#888;margin-bottom:7px;}
 .prod-price strong{color:var(--red);}
-.prod-ch-row{display:flex;align-items:center;gap:5px;background:#F7F7F8;border-radius:8px;padding:5px 9px;margin-bottom:8px;font-size:11px;}
-.prod-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.qty-wrap{display:flex;align-items:center;background:#F7F7F8;border-radius:10px;overflow:hidden;}
-.qb{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#333;border:none;background:transparent;cursor:pointer;}
-.qn{width:26px;text-align:center;font-size:13px;font-weight:800;color:#111;}
-.sel-btn{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:7px 0;font-size:12px;font-weight:800;cursor:pointer;}
-.sel-btn.done{background:#2E7D32;}
+.ch-row-sm{display:flex;align-items:center;gap:5px;background:#F7F7F8;border-radius:8px;padding:5px 9px;font-size:11px;}
+.prod-card.sel .ch-row-sm{background:var(--rl);}
 
-/* ===== 신청 윈도우 ===== */
-.countdown-box{background:#F7F7F8;border-radius:14px;padding:14px;text-align:center;}
+/* 제품 선택 하단 — 탭바 위에 떠있는 신청 버튼 */
+.product-cta{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:#fff;border-top:1px solid #EEE;padding:10px 14px;z-index:998;}
+.apply-btn{width:100%;background:#CCCCCC;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:800;cursor:default;transition:background .2s;}
+.apply-btn.active{background:var(--red);cursor:pointer;}
+
+/* ===== 신청 현황 ===== */
+.cd-box{background:#F7F7F8;border-radius:14px;padding:14px;text-align:center;}
 .cd-label{font-size:12px;color:#888;margin-bottom:5px;}
 .cd-time{font-size:32px;font-weight:900;color:var(--red);letter-spacing:.05em;}
 .cd-sub{font-size:11px;color:#AAA;margin-top:4px;}
 .prog-wrap{height:6px;background:#EEE;border-radius:3px;overflow:hidden;margin-bottom:4px;}
 .prog-fill{height:100%;background:var(--red);border-radius:3px;}
-.prog-labels{display:flex;justify-content:space-between;font-size:10px;color:#AAA;}
 .score-bar-bg{flex:1;height:8px;background:#EEE;border-radius:4px;overflow:hidden;}
 .score-bar-fill{height:100%;background:var(--red);border-radius:4px;}
 
@@ -150,27 +212,23 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 .my-hero{background:var(--red);padding:20px 16px 46px;}
 .my-av-row{display:flex;align-items:center;gap:14px;}
 .my-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;}
-.my-name{font-size:16px;font-weight:900;color:#fff;}
-.my-phone{font-size:12px;color:rgba(255,255,255,.72);margin-top:3px;}
+.my-name-txt{font-size:16px;font-weight:900;color:#fff;}
+.my-phone-txt{font-size:12px;color:rgba(255,255,255,.72);margin-top:3px;}
 .gold-badge{background:rgba(255,255,255,.2);border-radius:7px;padding:2px 8px;font-size:10px;color:#fff;font-weight:800;margin-left:5px;}
-
-/* 현황 보드 */
 .board{display:flex;gap:0;align-items:flex-start;padding:4px 0 6px;}
-.b-col{flex-shrink:0;width:60px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.b-col{flex-shrink:0;width:58px;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .b-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
 .bd-done{background:#E8F5E9;color:#2E7D32;}
 .bd-cur{background:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(226,75,74,.15);}
-.bd-todo{background:#F0F0F0;color:#CCCCCC;}
+.bd-todo{background:#F0F0F0;color:#CCC;}
 .b-label{font-size:9px;font-weight:700;text-align:center;color:#AAA;line-height:1.3;}
 .b-label.done{color:#2E7D32;}
 .b-label.cur{color:var(--red);font-weight:900;}
-.b-conn{width:22px;height:2px;background:#EEE;margin-top:16px;flex-shrink:0;}
+.b-conn{width:20px;height:2px;background:#EEE;margin-top:16px;flex-shrink:0;}
 .b-conn.done{background:#C8E6C9;}
 .board-now{background:var(--rl);border-radius:10px;padding:8px 12px;margin-top:8px;display:flex;align-items:center;gap:7px;}
 .bn-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 1.5s infinite;}
 .bn-txt{font-size:11px;color:var(--rd);font-weight:800;flex:1;}
-
-/* 진행 건 카드 */
 .active-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.08);}
 .ac-head{background:var(--rl);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;}
 .ac-head-name{font-size:13px;font-weight:800;color:var(--rd);}
@@ -182,8 +240,6 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 .ac-divider{height:1px;background:#F5F5F5;}
 .ac-action{padding:11px 16px;border-top:1px solid #F5F5F5;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .ac-action-txt{font-size:11px;color:#888;line-height:1.5;}
-
-/* 통계 */
 .stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .stat-box{background:#fff;border-radius:14px;padding:11px 6px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .sn{font-size:22px;font-weight:900;color:#111;}
@@ -191,7 +247,7 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 .menu-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
 .mi{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #F5F5F5;font-size:13px;color:#111;cursor:pointer;}
 .mi:last-child{border-bottom:none;}
-.mi-arr{color:#DDD;font-size:15px;}
+.mi-arr{color:#DDD;}
 
 /* 알림 */
 .notif-row{display:flex;align-items:flex-start;gap:11px;padding:13px 0;border-bottom:1px solid #F5F5F5;}
@@ -210,22 +266,14 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 <!-- ① 로그인 -->
 <div class="screen active" id="s-login" style="padding-bottom:0;">
   <div class="login-hero">
-    <div class="logo-box">
-      <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:.08em;">OZ</div>
-    </div>
+    <div class="logo-box"><div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:.08em;">OZ</div></div>
     <div class="logo-txt">OZKIZ</div>
     <div class="logo-sub">서포터즈 전용 플랫폼</div>
     <div class="login-badge">초대받은 서포터즈 전용</div>
   </div>
   <div class="login-form">
-    <div>
-      <div class="f-label">이름</div>
-      <input class="f-input" id="login-name" type="text" placeholder="이름을 입력하세요">
-    </div>
-    <div>
-      <div class="f-label">휴대폰 번호</div>
-      <input class="f-input" id="login-phone" type="tel" placeholder="010-0000-0000">
-    </div>
+    <div><div class="f-label">이름</div><input class="f-input" id="login-name" type="text" placeholder="이름을 입력하세요"></div>
+    <div><div class="f-label">휴대폰 번호</div><input class="f-input" id="login-phone" type="tel" placeholder="010-0000-0000"></div>
     <div>
       <div class="f-label">인증번호</div>
       <div class="f-row">
@@ -240,76 +288,25 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
 
 <!-- ② 캠페인 홈 -->
 <div class="screen" id="s-home">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-greeting" id="home-greeting">안녕하세요!</div>
-      <div class="tb-title">OZKIZ 서포터즈</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-greeting" id="home-greeting">안녕하세요!</div>
+    <div class="tb-title">OZKIZ 서포터즈</div>
+  </div></div>
   <div class="body">
-    <div class="quota-bar">
-      <div>
-        <div style="font-size:11px;color:#888;">내 구매 한도</div>
-        <div style="font-size:14px;font-weight:800;">최대 <span style="color:var(--red);">2개</span> 구매 가능</div>
-      </div>
-      <span class="pill p-red">1개 남음</span>
+    <div class="info-banner" onclick="openInfoPopup()">
+      <div class="ib-dot"></div>
+      <div class="ib-text">스피드 체험단 — 제품 구매 후 후기 작성 시 전액 환급해드려요</div>
+      <button class="ib-btn" onclick="openInfoPopup()">자세히 →</button>
     </div>
     <div class="sec">진행 중인 캠페인</div>
-    <div class="camp-hero" onclick="goTo('s-campaign')">
+    <div class="camp-hero" onclick="goTo('s-product')">
       <div class="ch-deco"></div><div class="ch-deco2"></div>
-      <div class="ch-tag">체험단 모집 중</div>
+      <div class="ch-tag">스피드 체험단 모집 중</div>
       <div class="ch-name">2025 봄 신상 체험단</div>
-      <div class="ch-sub">구매금액 전액 환급 · 후기 3종 필수</div>
+      <div class="ch-sub">구매금액 전액 환급 · 후기 확인 후 7일 이내 페이백</div>
       <div class="ch-pills">
-        <span class="ch-pill">마감 D-5</span>
-        <span class="ch-pill">신청 18명</span>
-      </div>
-    </div>
-    <div class="sec">내 진행 상태</div>
-    <div class="card">
-      <div class="step-track">
-        <div class="step-row">
-          <div class="step-col">
-            <div class="sdot sd-done">✓</div>
-            <div class="step-line done"></div>
-          </div>
-          <div class="step-content" style="padding-bottom:10px;">
-            <div class="st-name">신청 완료</div>
-            <div class="st-sub">4/14 오전 10:38 · 100점으로 신청</div>
-          </div>
-          <span class="pill p-green" style="font-size:9px;margin-top:3px;">완료</span>
-        </div>
-        <div class="step-row">
-          <div class="step-col">
-            <div class="sdot sd-done">✓</div>
-            <div class="step-line done"></div>
-          </div>
-          <div class="step-content" style="padding-bottom:10px;">
-            <div class="st-name">선발 · 제품 선택</div>
-            <div class="st-sub">바람막이 점퍼 38,000원 선택됨</div>
-          </div>
-          <span class="pill p-green" style="font-size:9px;margin-top:3px;">완료</span>
-        </div>
-        <div class="step-row">
-          <div class="step-col">
-            <div class="sdot sd-cur">3</div>
-            <div class="step-line"></div>
-          </div>
-          <div class="step-content" style="padding-bottom:10px;">
-            <div class="st-name cur">후기 작성 중</div>
-            <div class="st-sub cur">자사몰 완료 · 구매몰·SNS 2개 남음</div>
-          </div>
-          <span class="pill p-red" style="font-size:9px;margin-top:3px;">진행중</span>
-        </div>
-        <div class="step-row">
-          <div class="step-col">
-            <div class="sdot sd-todo">4</div>
-          </div>
-          <div class="step-content">
-            <div class="st-name muted">페이백 신청</div>
-            <div class="st-sub">후기 완료 후 신청 가능</div>
-          </div>
-        </div>
+        <span class="ch-pill">신청 마감 4/15 오후 3시</span>
+        <span class="ch-pill">후기 마감 4/22 자정</span>
       </div>
     </div>
     <button class="btn btn-red" onclick="goTo('s-review')">후기 제출하러 가기 →</button>
@@ -317,148 +314,94 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
   </div>
 </div>
 
-<!-- ③ 캠페인 선택 -->
-<div class="screen" id="s-campaign">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
-      <div class="tb-title">캠페인 선택</div>
-      <div class="tb-sub">참여할 캠페인을 선택하세요</div>
-    </div>
-  </div>
-  <div class="body">
-    <div class="sec">진행 중인 캠페인</div>
-    <div class="camp-card sel" id="camp1" onclick="selectCamp('camp1')">
-      <div class="camp-img" style="background:linear-gradient(135deg,#FFD5D5,#FFAAAA);">
-        <div class="camp-img-icon"><div style="font-size:22px;">👗</div></div>
-        <div class="camp-check cc-sel" id="camp1-check">✓</div>
-        <span class="pill p-red" style="position:absolute;top:10px;right:10px;font-size:9px;">D-5</span>
-      </div>
-      <div class="camp-body">
-        <div class="camp-name">2025 봄 신상 체험단</div>
-        <div class="camp-desc">바람막이·데님팬츠·티셔츠 중 선택</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="pill p-blue">신청 마감 4/15 오후 3시</span>
-          <span class="pill p-green">재고 있음</span>
-        </div>
-      </div>
-    </div>
-    <div class="camp-card" id="camp2" onclick="selectCamp('camp2')">
-      <div class="camp-img" style="background:linear-gradient(135deg,#D5E8FF,#AACCFF);">
-        <div class="camp-img-icon"><div style="font-size:22px;">🩱</div></div>
-        <div class="camp-check cc-def" id="camp2-check"></div>
-        <span class="pill p-orange" style="position:absolute;top:10px;right:10px;font-size:9px;">D-12</span>
-      </div>
-      <div class="camp-body">
-        <div class="camp-name">여름 수영복 체험단</div>
-        <div class="camp-desc">래시가드·수영복 신상 체험</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="pill p-blue">신청 마감 4/22 오후 3시</span>
-          <span class="pill p-orange">마감 임박</span>
-        </div>
-      </div>
-    </div>
-    <div class="camp-summary card">
-      <div style="font-size:11px;font-weight:800;color:var(--rd);margin-bottom:5px;">선택된 캠페인</div>
-      <div style="font-size:14px;font-weight:800;color:var(--rd);" id="camp-name-display">2025 봄 신상 체험단</div>
-      <div style="font-size:11px;color:var(--rm);margin-top:3px;" id="camp-date-display">신청 마감: 4/15 오후 3시 · 점수 순 자동 배정</div>
-    </div>
-    <button class="btn btn-red" onclick="goTo('s-apply')">이 캠페인 신청하기 →</button>
-    <button class="btn btn-out" onclick="goTo('s-product')">제품 먼저 보기</button>
-  </div>
-</div>
+<!-- ③ 제품 선택 -->
+<div class="screen" id="s-product" style="padding-bottom:140px;">
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+    <div class="tb-title">제품 선택</div>
+  </div></div>
 
-<!-- ④ 제품 선택 -->
-<div class="screen" id="s-product">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-campaign')">← 이전</button></div>
-      <div class="tb-title">제품 선택</div>
-      <div class="tb-sub">최대 2개 · 1개 남음</div>
+  <!-- 캠페인 정보 카드 — 빨간바 아래 완전히 분리 -->
+  <div class="camp-info-card">
+    <div class="ci-name">2025 봄 신상 체험단</div>
+    <div class="ci-meta">
+      <div class="ci-row">
+        <div class="ci-dot" style="background:var(--red);"></div>
+        <div class="ci-label">신청 마감</div>
+        <div class="ci-val red">2025.04.15 (화) 오후 3시</div>
+      </div>
+      <div class="ci-row">
+        <div class="ci-dot" style="background:#1565C0;"></div>
+        <div class="ci-label">후기 마감</div>
+        <div class="ci-val blue">선정 후 · 2025.04.22 (화) 자정</div>
+      </div>
     </div>
   </div>
-  <div class="body">
-    <div style="background:var(--rl);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
-      <div style="font-size:12px;font-weight:700;color:var(--rd);">내 구매 가능 수량 · 최대 2개</div>
-      <span class="pill p-red">1개 남음</span>
-    </div>
-    <div class="sec">캠페인 제품 목록</div>
-    <div class="prod-card sel" id="prod1">
+
+  <div class="body" style="margin-top:10px;">
+
+    <div class="prod-card" id="prod1" onclick="selectProd('prod1','봄 신상 바람막이 점퍼 (3~5세)')">
       <div class="prod-img" style="background:linear-gradient(135deg,#FFD5D5,#FFAAAA);">
         <div class="prod-img-box"></div>
         <div class="prod-ch-tag">자사몰</div>
-        <span class="pill p-green prod-stk" style="font-size:9px;padding:2px 7px;">재고 충분</span>
+        <div class="check-box"><span class="check-icon">✓</span></div>
       </div>
       <div class="prod-body">
         <div class="prod-name">봄 신상 바람막이 점퍼 (3~5세)</div>
         <div class="prod-price">구매가 <strong>38,000원</strong> → 전액 환급</div>
-        <div class="prod-ch-row">
-          <span style="color:var(--red);font-size:11px;">●</span>
-          <span style="color:#999;font-size:11px;">구매처</span>
-          <span style="font-weight:800;color:var(--rd);font-size:11px;">ozkiz.com 자사몰</span>
-          <span style="margin-left:auto;font-size:13px;">🔒</span>
-        </div>
-        <div class="prod-footer">
-          <div style="font-size:11px;color:#888;">잔여 <span style="color:#222;font-weight:800;">47개</span></div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="qty-wrap"><button class="qb" onclick="changeQty('q1',-1)">−</button><div class="qn" id="q1">1</div><button class="qb" onclick="changeQty('q1',1)">+</button></div>
-            <button class="sel-btn done" onclick="selectProd('prod1',this)">선택됨 ✓</button>
-          </div>
+        <div class="ch-row-sm">
+          <span style="color:var(--red);">●</span><span style="color:#999;">구매처</span>
+          <span style="font-weight:800;color:var(--rd);">ozkiz.com 자사몰</span>
+          <span style="margin-left:auto;">🔒</span>
         </div>
       </div>
     </div>
-    <div class="prod-card" id="prod2">
+
+    <div class="prod-card" id="prod2" onclick="selectProd('prod2','데님 와이드 팬츠 (5~7세)')">
       <div class="prod-img" style="background:linear-gradient(135deg,#D5E8FF,#AACCFF);">
         <div class="prod-img-box"></div>
-        <div class="prod-ch-tag" style="color:#1565C0;">네이버</div>
-        <span class="pill p-orange prod-stk" style="font-size:9px;padding:2px 7px;">마감 임박</span>
+        <div class="prod-ch-tag" style="color:#1565C0;">쿠팡</div>
+        <div class="check-box"><span class="check-icon">✓</span></div>
       </div>
       <div class="prod-body">
         <div class="prod-name">데님 와이드 팬츠 (5~7세)</div>
         <div class="prod-price">구매가 <strong>29,000원</strong> → 전액 환급</div>
-        <div class="prod-ch-row">
-          <span style="color:var(--red);font-size:11px;">●</span>
-          <span style="color:#999;font-size:11px;">구매처</span>
-          <span style="font-weight:800;color:var(--rd);font-size:11px;">네이버 스마트스토어</span>
-          <span style="margin-left:auto;font-size:13px;">🔒</span>
-        </div>
-        <div class="prod-footer">
-          <div style="font-size:11px;color:#E65100;">잔여 <strong>3개</strong></div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div class="qty-wrap"><button class="qb" onclick="changeQty('q2',-1)">−</button><div class="qn" id="q2">1</div><button class="qb" onclick="changeQty('q2',1)">+</button></div>
-            <button class="sel-btn" onclick="selectProd('prod2',this)">선택</button>
-          </div>
+        <div class="ch-row-sm">
+          <span style="color:var(--red);">●</span><span style="color:#999;">구매처</span>
+          <span style="font-weight:800;color:var(--rd);">쿠팡</span>
+          <span style="margin-left:auto;">🔒</span>
         </div>
       </div>
     </div>
-    <div class="prod-card" style="opacity:.5;">
+
+    <div class="prod-card disabled">
       <div class="prod-img" style="background:#F0F0F0;">
         <div class="prod-img-box"></div>
-        <div class="prod-ch-tag" style="color:#777;">쿠팡</div>
-        <span class="pill p-gray prod-stk" style="font-size:9px;padding:2px 7px;">마감</span>
+        <div class="prod-ch-tag" style="color:#888;">네이버</div>
+        <div class="check-box" style="border-color:#DDD;"></div>
       </div>
       <div class="prod-body">
         <div class="prod-name">스트라이프 티셔츠 2종 세트</div>
-        <div class="prod-price">구매가 <strong>22,000원</strong> → 전액 환급</div>
-        <div class="prod-footer">
-          <div style="font-size:11px;color:#AAA;">잔여 0개</div>
-          <button class="sel-btn" disabled style="background:#EEE;color:#BBB;">마감</button>
-        </div>
+        <div class="prod-price">구매가 <strong>22,000원</strong></div>
+        <div style="font-size:12px;color:#AAA;margin-top:3px;">마감된 제품이에요</div>
       </div>
     </div>
-    <button class="btn btn-red" onclick="goTo('s-apply')">선택 완료 · 신청하기 →</button>
+
+  </div>
+
+  <!-- 신청 버튼 — 탭바 바로 위에 고정 -->
+  <div class="product-cta" id="product-cta">
+    <button class="apply-btn" id="apply-btn" onclick="showConfirmPopup()">제품을 선택해주세요</button>
   </div>
 </div>
 
-<!-- ⑤ 신청 윈도우 -->
+<!-- ④ 신청 현황 -->
 <div class="screen" id="s-apply">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
-      <div class="tb-title">신청 현황</div>
-      <div class="tb-sub">방식 B — 점수 순 자동 배정</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+    <div class="tb-title">신청 현황</div>
+    <div class="tb-sub">방식 B — 점수 순 자동 배정</div>
+  </div></div>
   <div class="body">
     <div class="card">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
@@ -466,22 +409,22 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
         <div style="font-size:13px;font-weight:800;">신청 접수 중</div>
         <span class="pill p-green" style="margin-left:auto;">윈도우 오픈</span>
       </div>
-      <div class="countdown-box">
+      <div class="cd-box">
         <div class="cd-label">신청 마감까지</div>
         <div class="cd-time" id="countdown">05:24:38</div>
         <div class="cd-sub">마감 후 점수 순으로 자동 배정</div>
       </div>
       <div class="prog-wrap" style="margin-top:13px;"><div class="prog-fill" style="width:28%;"></div></div>
-      <div class="prog-labels"><span>오픈 후 1시간 경과</span><span>총 3시간</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#AAA;"><span>오픈 후 1시간 경과</span><span>총 3시간</span></div>
     </div>
     <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
-      <div style="font-size:13px;color:#1B5E20;line-height:1.7;"><strong>마감 전 언제든 신청 가능해요!</strong><br>빨리 신청해도, 늦게 신청해도<br><strong>점수가 높은 순으로 배정</strong>돼요.</div>
+      <div style="font-size:13px;color:#1B5E20;line-height:1.7;"><strong>마감 전 언제든 신청 가능해요!</strong><br>점수가 높은 순으로 배정돼요.</div>
     </div>
     <div class="card">
       <div class="card-title">내 우선순위 점수</div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:9px;">
         <div class="score-bar-bg"><div class="score-bar-fill" style="width:100%;"></div></div>
-        <span style="font-size:22px;font-weight:900;color:#111;">100점</span>
+        <span style="font-size:22px;font-weight:900;">100점</span>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;">
         <span class="pill p-blue">참여 0회</span>
@@ -493,29 +436,23 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
   </div>
 </div>
 
-<!-- ⑤-2 신청 완료 대기 -->
+<!-- ④-2 신청 완료 대기 -->
 <div class="screen" id="s-applied">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-apply')">← 이전</button></div>
-      <div class="tb-title">신청 완료</div>
-      <div class="tb-sub">배정 결과를 기다려주세요</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-row"><button class="back-pill" onclick="goTo('s-apply')">← 이전</button></div>
+    <div class="tb-title">신청 완료</div>
+    <div class="tb-sub">배정 결과를 기다려주세요</div>
+  </div></div>
   <div class="body">
     <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="width:36px;height:36px;border-radius:50%;background:#2E7D32;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;">✓</div>
-        <div>
-          <div style="font-size:15px;font-weight:800;color:#1B5E20;">신청 완료!</div>
-          <div style="font-size:12px;color:#2E7D32;margin-top:2px;">마감 후 결과를 알려드릴게요</div>
-        </div>
+        <div><div style="font-size:15px;font-weight:800;color:#1B5E20;">신청 완료!</div><div style="font-size:12px;color:#2E7D32;margin-top:2px;">마감 후 점수 순 자동 배정돼요</div></div>
       </div>
     </div>
     <div class="card">
       <div style="font-size:12px;color:#888;margin-bottom:6px;">배정 결과까지</div>
       <div class="cd-time" style="font-size:28px;">04:21:05</div>
-      <div style="font-size:12px;color:#AAA;margin-top:4px;">마감 후 점수 순 자동 배정</div>
     </div>
     <div class="card">
       <div class="card-title">내 신청 현황</div>
@@ -527,19 +464,18 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
   </div>
 </div>
 
-<!-- ⑥ 후기 제출 -->
+<!-- ⑤ 후기 제출 -->
 <div class="screen" id="s-review">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
-      <div class="tb-title">후기 제출</div>
-      <div class="tb-sub">3가지 채널 모두 완료해주세요</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-row"><button class="back-pill" onclick="goTo('s-home')">← 이전</button></div>
+    <div class="tb-title">후기 제출</div>
+    <div class="tb-sub">3가지 채널 모두 완료해주세요</div>
+  </div></div>
   <div class="body">
-    <div class="card">
-      <div class="prog-wrap"><div class="prog-fill" style="width:33%;"></div></div>
-      <div class="prog-labels"><span>1/3 완료</span><span>마감 D-5</span></div>
+    <div class="card"><div class="prog-wrap"><div class="prog-fill" style="width:33%;"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#AAA;"><span>1/3 완료</span><span>마감 D-5</span></div></div>
+    <div class="card" style="background:#FFF8E1;box-shadow:none;border:1px solid #FFE082;">
+      <div style="font-size:12px;font-weight:800;color:#F57F17;margin-bottom:5px;">후기 작성 가이드</div>
+      <div style="font-size:12px;color:#795548;line-height:1.7;">사진 2~3장 이상 · 텍스트 20자 이상<br>착용컷 포함 필수 · 자녀 사이즈 기입<br>해시태그 5개 이상 (아동, 키즈, 등원룩 등)</div>
     </div>
     <div class="card">
       <div class="card-title">후기 채널별 현황</div>
@@ -560,15 +496,13 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
   </div>
 </div>
 
-<!-- ⑦ 페이백 신청 -->
+<!-- ⑥ 페이백 신청 -->
 <div class="screen" id="s-payback">
-  <div class="topbar">
-    <div class="tb-main">
-      <div class="tb-row"><button class="back-pill" onclick="goTo('s-review')">← 이전</button></div>
-      <div class="tb-title">페이백 신청</div>
-      <div class="tb-sub">후기 완료 후 환급 신청</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main">
+    <div class="tb-row"><button class="back-pill" onclick="goTo('s-review')">← 이전</button></div>
+    <div class="tb-title">페이백 신청</div>
+    <div class="tb-sub">후기 확인 후 7일 이내 입금</div>
+  </div></div>
   <div class="body">
     <div class="card" style="background:#E8F5E9;box-shadow:none;border:1px solid #C8E6C9;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -579,70 +513,53 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
     <div class="amount-box">
       <div class="amount-label">환급 예정 금액</div>
       <div class="amount-num">38,000원</div>
-      <div class="amount-sub">구매 영수증 기준 전액 환급</div>
+      <div class="amount-sub">후기 확인 후 7일 이내 · (주)오픈한 명의로 입금</div>
     </div>
     <div class="card">
       <div class="card-title">계좌 정보</div>
+      <div style="font-size:11px;color:#AAA;margin-bottom:10px;">계좌명과 구매자 성함이 다를 경우 메모란에 기입해주세요</div>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div><div class="f-label">은행</div><input class="f-input-sm" placeholder="예: 카카오뱅크"></div>
-        <div><div class="f-label">계좌번호</div><input class="f-input-sm" placeholder="계좌번호 입력 (- 없이)"></div>
+        <div><div class="f-label">계좌번호</div><input class="f-input-sm" placeholder="계좌번호 (- 없이)"></div>
         <div><div class="f-label">예금주</div><input class="f-input-sm" placeholder="예금주명 입력"></div>
+        <div><div class="f-label">메모 (선택)</div><input class="f-input-sm" placeholder="구매자 성함이 다를 경우 입력"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">구매 영수증 <span class="pill p-red" style="font-size:9px;">필수</span></div>
       <div class="upload-box done">영수증 사진 첨부 완료 ✓</div>
     </div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid #F5F5F5;"><span style="color:#888;">구매 금액</span><span style="font-weight:800;">38,000원</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;"><span style="color:#888;">환급 금액</span><span style="font-weight:800;color:var(--red);">38,000원</span></div>
+    <div class="card" style="background:#FFF8E1;box-shadow:none;border:1px solid #FFE082;">
+      <div style="font-size:12px;color:#795548;line-height:1.7;">페이백은 <strong style="color:#111;">주말 제외 7일 이내</strong> 입금돼요.<br>7일 후에도 미입금 시 헤이즐에게 연락주세요.<br><strong style="color:#111;">010-6528-2213</strong></div>
     </div>
     <button class="btn btn-red" onclick="goTo('s-mypage')">페이백 신청하기 →</button>
-    <div style="font-size:12px;color:#BBB;text-align:center;">관리자 검토 후 3~5 영업일 내 입금돼요</div>
   </div>
 </div>
 
-<!-- ⑧ 마이페이지 -->
+<!-- ⑦ 마이페이지 -->
 <div class="screen" id="s-mypage">
   <div class="my-hero">
     <div class="my-av-row">
       <div class="my-av" id="my-avatar">김서</div>
       <div>
-        <div class="my-name" id="my-name">김서포 <span class="gold-badge">골드</span></div>
-        <div class="my-phone" id="my-phone">010-****-5678</div>
+        <div class="my-name-txt" id="my-name">김서포 <span class="gold-badge">골드</span></div>
+        <div class="my-phone-txt" id="my-phone">010-****-5678</div>
       </div>
     </div>
   </div>
-  <div class="body">
-
-    <!-- 현황 보드 -->
+  <div class="body" style="margin-top:-22px;">
     <div class="sec">진행 현황 보드</div>
     <div class="card" style="padding:14px 12px;">
       <div class="board">
-        <div class="b-col">
-          <div class="b-dot bd-done">✓</div>
-          <div class="b-label done">신청</div>
-        </div>
+        <div class="b-col"><div class="b-dot bd-done">✓</div><div class="b-label done">신청</div></div>
         <div class="b-conn done"></div>
-        <div class="b-col">
-          <div class="b-dot bd-done">✓</div>
-          <div class="b-label done">선발</div>
-        </div>
+        <div class="b-col"><div class="b-dot bd-done">✓</div><div class="b-label done">선발</div></div>
         <div class="b-conn done"></div>
-        <div class="b-col">
-          <div class="b-dot bd-done">✓</div>
-          <div class="b-label done">구매</div>
-        </div>
+        <div class="b-col"><div class="b-dot bd-done">✓</div><div class="b-label done">구매</div></div>
         <div class="b-conn done"></div>
-        <div class="b-col">
-          <div class="b-dot bd-cur" style="font-size:16px;">✍</div>
-          <div class="b-label cur">후기작성</div>
-        </div>
+        <div class="b-col"><div class="b-dot bd-cur" style="font-size:16px;">✍</div><div class="b-label cur">후기작성</div></div>
         <div class="b-conn"></div>
-        <div class="b-col">
-          <div class="b-dot bd-todo" style="font-size:14px;">₩</div>
-          <div class="b-label">페이백</div>
-        </div>
+        <div class="b-col"><div class="b-dot bd-todo" style="font-size:14px;">₩</div><div class="b-label">페이백</div></div>
       </div>
       <div class="board-now">
         <div class="bn-dot"></div>
@@ -650,8 +567,6 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
         <span class="pill p-orange" style="font-size:9px;">D-5 마감</span>
       </div>
     </div>
-
-    <!-- 진행 중인 건 -->
     <div class="sec">진행 중인 건</div>
     <div class="active-card">
       <div class="ac-head">
@@ -663,19 +578,13 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
         <div class="ac-divider"></div>
         <div style="font-size:12px;font-weight:800;color:#111;">후기 제출 현황</div>
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
-            <span style="color:#888;">자사몰 후기</span><span class="pill p-green">완료</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
-            <span style="color:#888;">구매몰 후기</span><span class="pill p-red">미제출</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
-            <span style="color:#888;">SNS 후기</span><span class="pill p-gray">미제출</span>
-          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;"><span style="color:#888;">자사몰 후기</span><span class="pill p-green">완료</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;"><span style="color:#888;">구매몰 후기</span><span class="pill p-red">미제출</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;"><span style="color:#888;">SNS 후기</span><span class="pill p-gray">미제출</span></div>
         </div>
         <div style="background:#FFF3E0;border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
           <div style="font-size:12px;color:#E65100;font-weight:800;">후기 마감일</div>
-          <div style="font-size:12px;font-weight:900;color:#E65100;">4/19 자정 · D-5</div>
+          <div style="font-size:12px;font-weight:900;color:#E65100;">4/22 자정 · D-5</div>
         </div>
       </div>
       <div class="ac-action">
@@ -683,8 +592,6 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
         <button class="btn-sm" onclick="goTo('s-review')">후기 제출 →</button>
       </div>
     </div>
-
-    <!-- 대기 중인 건 -->
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-size:13px;font-weight:800;color:#111;">여름 수영복 체험단</div>
@@ -692,16 +599,12 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
       </div>
       <span class="pill p-orange">대기중</span>
     </div>
-
-    <!-- 전체 통계 -->
     <div class="sec">전체 활동 현황</div>
     <div class="stat-row">
       <div class="stat-box"><div class="sn">5</div><div class="sl">총 신청</div></div>
       <div class="stat-box"><div class="sn" style="color:#2E7D32;">3</div><div class="sl">완료</div></div>
       <div class="stat-box"><div class="sn" style="color:var(--red);">1</div><div class="sl">진행중</div></div>
     </div>
-
-    <!-- 메뉴 -->
     <div class="menu-card">
       <div class="mi" onclick="goTo('s-review')">후기 제출 현황 <span class="mi-arr">›</span></div>
       <div class="mi">페이백 내역 <span class="mi-arr">›</span></div>
@@ -712,45 +615,135 @@ body{background:#F0F0F2;display:flex;justify-content:center;min-height:100vh;}
   </div>
 </div>
 
-<!-- ⑨ 알림 -->
+<!-- ⑧ 알림 -->
 <div class="screen" id="s-notif">
-  <div class="topbar">
-    <div class="tb-main" style="padding-bottom:18px;">
-      <div class="tb-title">알림</div>
-    </div>
-  </div>
+  <div class="topbar"><div class="tb-main" style="padding-bottom:18px;"><div class="tb-title">알림</div></div></div>
   <div class="body" style="margin-top:0;">
     <div class="card">
-      <div class="notif-row"><div class="nd"></div><div><div class="nt">페이백 신청이 접수됐어요. 관리자 검토 후 3~5 영업일 내 입금돼요.</div><div class="ntime">방금 전</div></div></div>
-      <div class="notif-row"><div class="nd"></div><div><div class="nt">구매몰 후기 URL이 등록됐어요. 인스타·블로그도 제출해주세요!</div><div class="ntime">1시간 전</div></div></div>
+      <div class="notif-row"><div class="nd"></div><div><div class="nt">페이백 신청이 접수됐어요. 후기 확인 후 7일 이내 입금돼요.</div><div class="ntime">방금 전</div></div></div>
+      <div class="notif-row"><div class="nd"></div><div><div class="nt">구매몰 후기 URL이 등록됐어요. SNS 후기도 제출해주세요!</div><div class="ntime">1시간 전</div></div></div>
       <div class="notif-row"><div class="nd read"></div><div><div class="nt" style="color:#888;">후기 마감이 <strong style="color:#111;">D-5</strong>예요. 서둘러 제출해주세요.</div><div class="ntime">어제</div></div></div>
-      <div class="notif-row"><div class="nd read"></div><div><div class="nt" style="color:#888;">2025 봄 신상 체험단에 배정됐어요! 제품을 선택해주세요.</div><div class="ntime">3일 전</div></div></div>
-      <div class="notif-row" style="border-bottom:none;"><div class="nd read"></div><div><div class="nt" style="color:#888;">여름 수영복 체험단 신청이 완료됐어요. 배정 결과를 기다려주세요.</div><div class="ntime">5일 전</div></div></div>
+      <div class="notif-row" style="border-bottom:none;"><div class="nd read"></div><div><div class="nt" style="color:#888;">봄 신상 체험단에 배정됐어요! 제품을 선택해주세요.</div><div class="ntime">3일 전</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- 하단 탭바 -->
+<!-- ===== 항상 고정 하단 탭바 ===== -->
 <div class="bottom-nav" id="bottom-nav">
   <div class="nav-item on" id="nav-home" onclick="goNav('s-home','nav-home')"><div class="nav-dot"></div>홈</div>
-  <div class="nav-item" id="nav-camp" onclick="goNav('s-campaign','nav-camp')"><div class="nav-dot"></div>캠페인</div>
+  <div class="nav-item" id="nav-camp" onclick="goNav('s-product','nav-camp')"><div class="nav-dot"></div>캠페인</div>
   <div class="nav-item" id="nav-notif" onclick="goNav('s-notif','nav-notif')"><div class="nav-dot"></div>알림</div>
   <div class="nav-item" id="nav-my" onclick="goNav('s-mypage','nav-my')"><div class="nav-dot"></div>마이</div>
+</div>
+
+<!-- ===== 스피드 체험단 안내 팝업 ===== -->
+<div class="overlay" id="info-popup">
+  <div class="popup">
+    <div class="popup-handle"></div>
+    <div class="popup-header">
+      <div class="popup-title">스피드 체험단 안내</div>
+      <button class="popup-close" onclick="closeInfoPopup()">✕</button>
+    </div>
+    <div class="popup-body">
+      <div style="background:var(--rl);border-radius:14px;padding:13px 16px;">
+        <div style="font-size:14px;font-weight:900;color:var(--rd);margin-bottom:5px;">제품 구매 → 후기 작성 → 전액 환급!</div>
+        <div style="font-size:13px;color:var(--rm);line-height:1.7;">후기 확인 후 <strong style="color:var(--rd);">주말 제외 7일 이내</strong> 구매금액을 페이백해드려요.</div>
+      </div>
+      <div>
+        <div class="ps-title">💗 진행 방법</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-txt">선정된 제품을 <strong>안내받은 링크에서 직접 구매</strong>해주세요</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-txt">제품을 수령하고 착용컷 포함 후기를 작성해주세요</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-txt"><strong>자사몰 + 구매몰 + SNS</strong> 후기 3종을 모두 작성해주세요</div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-txt">앱에서 후기 URL · 영수증 · 계좌정보를 제출해주세요</div></div>
+          <div class="step-item"><div class="step-num">5</div><div class="step-txt">후기 확인 후 <strong>주말 제외 7일 이내</strong> 구매금액 전액 환급!</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="ps-title">📱 SNS 후기 가이드</div>
+        <div class="sns-box">
+          <div class="sns-row"><div class="sns-dot"></div><div>설문에 제출한 SNS 계정에 업로드 (이미지·영상 모두 가능)</div></div>
+          <div class="sns-row"><div class="sns-dot"></div><div>해시태그 <strong>5개 이상</strong> — 제품 키워드 + 아동/키즈/유아 조합</div></div>
+          <div class="sns-row"><div class="sns-dot"></div><div>예) 청바지 → <span style="color:var(--red);">#아동청바지 #등원룩 #남매룩 #유아청바지</span></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="ps-title">🛒 구매몰별 후기 기준</div>
+        <div class="guide-table">
+          <div class="gt-header"><div class="gt-h">구매몰</div><div class="gt-h">후기 기준</div><div class="gt-h">배송</div></div>
+          <div class="gt-row"><div class="gt-c"><strong>쿠팡</strong></div><div class="gt-c">사진 2장↑ 20자↑</div><div class="gt-c">당일~1일</div></div>
+          <div class="gt-row"><div class="gt-c"><strong>무신사</strong></div><div class="gt-c">착용컷 3장↑ 20자↑</div><div class="gt-c">1~2일</div></div>
+          <div class="gt-row"><div class="gt-c"><strong>보리보리</strong></div><div class="gt-c">착용컷 3장↑ 20자↑</div><div class="gt-c">1~2일</div></div>
+          <div class="gt-row"><div class="gt-c"><strong>자사몰</strong></div><div class="gt-c">착용컷 3장↑ 사이즈 필수</div><div class="gt-c">당일~1일</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="ps-title">⚠️ 꼭 확인해주세요</div>
+        <div class="warn-box">
+          <div class="warn-row"><span>1️⃣</span><div>마감일까지 후기 미완료 시 <strong>다음 체험단 후순위</strong> 적용돼요</div></div>
+          <div class="warn-row"><span>2️⃣</span><div>구매 후 후기 미작성 시 <strong>페이백 불가</strong>합니다</div></div>
+          <div class="warn-row"><span>3️⃣</span><div>7일 후 미입금 시 <strong>헤이즐(010-6528-2213)</strong>에게 연락주세요</div></div>
+        </div>
+      </div>
+      <div class="contact-box">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--rd);">문의 · 헤이즐</div>
+          <div style="font-size:11px;color:var(--rm);margin-top:2px;">010-6528-2213</div>
+        </div>
+        <a href="https://forms.gle/qdNbt6NaTzafncgU9" target="_blank" class="form-link">페이백 폼 제출 →</a>
+      </div>
+      <button class="btn btn-red" onclick="closeInfoPopup()">확인했어요</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 신청 완료 확인 팝업 ===== -->
+<div class="confirm-overlay" id="confirm-popup">
+  <div class="confirm-popup">
+    <div class="cp-handle"></div>
+    <div class="cp-header">
+      <div class="cp-icon">🎉</div>
+      <div class="cp-title">신청 완료!</div>
+      <div class="cp-sub" id="cp-sub">신청이 완료됐어요</div>
+    </div>
+    <div class="cp-body">
+      <div style="font-size:12px;font-weight:800;color:#888;">신청 내역 확인 방법</div>
+      <div class="cp-info">
+        <div class="cp-row">
+          <div class="cp-icon-sm" style="background:var(--rl);">👤</div>
+          <div class="cp-txt"><strong>마이페이지</strong>에서 진행 현황 보드와 신청 내역을 확인할 수 있어요</div>
+        </div>
+        <div class="cp-row">
+          <div class="cp-icon-sm" style="background:#E3F2FD;">🔔</div>
+          <div class="cp-txt"><strong>배정 결과</strong>는 마감 후 알림으로 알려드려요</div>
+        </div>
+        <div class="cp-row">
+          <div class="cp-icon-sm" style="background:#E8F5E9;">📅</div>
+          <div class="cp-txt">선정되면 <strong>04/22(화) 자정</strong>까지 후기 3종을 제출해주세요</div>
+        </div>
+      </div>
+      <button class="cp-btn" onclick="closeConfirmPopup()">확인했어요</button>
+    </div>
+  </div>
 </div>
 
 </div>
 
 <script>
 const HIDE_NAV=['s-login'];
-const NAV_MAP={'s-home':'nav-home','s-campaign':'nav-camp','s-product':'nav-camp','s-apply':'nav-camp','s-applied':'nav-camp','s-review':'nav-home','s-payback':'nav-home','s-mypage':'nav-my','s-notif':'nav-notif'};
+const NAV_MAP={'s-home':'nav-home','s-product':'nav-camp','s-apply':'nav-camp','s-applied':'nav-camp','s-review':'nav-home','s-payback':'nav-home','s-mypage':'nav-my','s-notif':'nav-notif'};
 
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  // 탭바는 로그인 화면에서만 숨김 — 항상 유지
   document.getElementById('bottom-nav').style.display=HIDE_NAV.includes(id)?'none':'flex';
+  // 제품 선택 화면에서만 신청 버튼 표시
+  const cta=document.getElementById('product-cta');
+  if(cta) cta.style.display=id==='s-product'?'block':'none';
   const nav=NAV_MAP[id];
-  if(nav) setNav(nav);
+  if(nav)setNav(nav);
 }
 function goNav(screen,nav){goTo(screen);setNav(nav);}
 function setNav(id){
@@ -758,10 +751,35 @@ function setNav(id){
   document.getElementById(id)?.classList.add('on');
 }
 
+// 안내 팝업
+function openInfoPopup(){document.getElementById('info-popup').classList.add('show');document.body.style.overflow='hidden';}
+function closeInfoPopup(){document.getElementById('info-popup').classList.remove('show');document.body.style.overflow='';}
+
+// 신청 완료 팝업
+let selectedProd=null;
+function selectProd(id,name){
+  document.querySelectorAll('.prod-card:not(.disabled)').forEach(c=>c.classList.remove('sel'));
+  document.getElementById(id).classList.add('sel');
+  selectedProd=name;
+  const btn=document.getElementById('apply-btn');
+  btn.textContent=name+' — 신청하기 →';
+  btn.classList.add('active');
+}
+function showConfirmPopup(){
+  if(!selectedProd)return;
+  document.getElementById('cp-sub').innerHTML='<strong>'+selectedProd+'</strong>으로<br>신청이 완료됐어요';
+  document.getElementById('confirm-popup').classList.add('show');
+}
+function closeConfirmPopup(){
+  document.getElementById('confirm-popup').classList.remove('show');
+  goTo('s-mypage');
+  setNav('nav-my');
+}
+
+// 로그인
 function sendSMS(){
-  const phone=document.getElementById('login-phone').value;
-  if(!phone){alert('전화번호를 입력해주세요.');return;}
-  alert('인증번호가 발송됐어요!\n(테스트 모드: 123456)');
+  if(!document.getElementById('login-phone').value){alert('전화번호를 입력해주세요.');return;}
+  alert('인증번호가 발송됐어요!\n(테스트: 123456)');
 }
 function doLogin(){
   const name=document.getElementById('login-name').value.trim();
@@ -773,34 +791,8 @@ function doLogin(){
   document.getElementById('my-phone').textContent=phone.replace(/(\d{3})-?(\d{4})-?(\d{4})/,'$1-****-$3');
   goTo('s-home');setNav('nav-home');
 }
-function changeQty(id,delta){
-  const el=document.getElementById(id);
-  let v=parseInt(el.textContent)+delta;
-  if(v<1)v=1;if(v>2)v=2;
-  el.textContent=v;
-}
-function selectProd(prodId,btn){
-  document.querySelectorAll('.prod-card').forEach(c=>c.classList.remove('sel'));
-  document.querySelectorAll('.sel-btn').forEach(b=>{b.textContent='선택';b.classList.remove('done');});
-  document.getElementById(prodId).classList.add('sel');
-  btn.textContent='선택됨 ✓';btn.classList.add('done');
-}
-const campData={camp1:{name:'2025 봄 신상 체험단',date:'4/15 오후 3시'},camp2:{name:'여름 수영복 체험단',date:'4/22 오후 3시'}};
-function selectCamp(id){
-  ['camp1','camp2'].forEach(c=>{
-    const card=document.getElementById(c);
-    const check=document.getElementById(c+'-check');
-    if(c===id){
-      card.classList.add('sel');
-      check.className='camp-check cc-sel';check.textContent='✓';
-    }else{
-      card.classList.remove('sel');
-      check.className='camp-check cc-def';check.textContent='';
-    }
-  });
-  document.getElementById('camp-name-display').textContent=campData[id].name;
-  document.getElementById('camp-date-display').textContent='신청 마감: '+campData[id].date+' · 점수 순 자동 배정';
-}
+
+// 카운트다운
 let secs=19478;
 setInterval(()=>{
   secs=Math.max(0,secs-1);
@@ -809,7 +801,10 @@ setInterval(()=>{
   const s=String(secs%60).padStart(2,'0');
   document.getElementById('countdown').textContent=h+':'+m+':'+s;
 },1000);
+
+// 초기 설정
 setNav('nav-home');
+document.getElementById('product-cta').style.display='none';
 </script>
 </body>
 </html>
